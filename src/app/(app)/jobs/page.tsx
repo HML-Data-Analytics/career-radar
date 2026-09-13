@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { JobPasteForm } from "@/components/jobs/job-paste-form";
+import { DiscoverJobsPanel } from "@/components/jobs/discover-jobs-panel";
 import { JobsList } from "@/components/jobs/jobs-list";
 
 export default async function JobsPage() {
@@ -48,9 +49,11 @@ export default async function JobsPage() {
       <div>
         <h1 className="font-heading text-2xl font-semibold tracking-tight">Jobs</h1>
         <p className="text-muted-foreground">
-          Add jobs manually for now - pluggable job sources (Greenhouse, Lever, approved APIs) come in a later phase.
+          Discover remote jobs automatically, or add any job manually by URL or pasted description. LinkedIn is not a source here - see the README for why.
         </p>
       </div>
+
+      <DiscoverJobsPanel />
 
       <JobPasteForm />
 

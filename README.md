@@ -48,6 +48,7 @@ it comes from authenticated database records. See `supabase/migrations/`.
    ```
    supabase/migrations/0001_init.sql
    supabase/migrations/0002_storage.sql
+   supabase/migrations/0003_job_sources_seed.sql
    ```
 
 4. Start the dev server:
@@ -66,6 +67,31 @@ on that network (including Vercel's default runtime) will time out rather
 than fail cleanly, so AI features only work when the deploying server can
 reach the HML network. `GENAI_MODEL` is required with no default - a wrong
 or missing model id also fails as a timeout, not a clear error.
+
+## Job sources
+
+Job discovery is pluggable (`src/lib/jobs/sources/`, `JobSource` interface)
+so adding a source is implementing one function and registering it in
+`sources/index.ts`. Currently wired up:
+
+- **Remotive** (`sources/remotive.ts`) - free, public, no API key needed,
+  remote jobs only. Remotive's terms require crediting them and linking back
+  to the original listing wherever it's shown, which every discovered job
+  card does. Don't remove that attribution.
+
+**LinkedIn is deliberately not a source and never will be built as a scrape.**
+LinkedIn's Terms of Service explicitly prohibit scraping their job listings,
+they actively detect and block it, and there's litigation history over
+exactly this (hiQ Labs v. LinkedIn and others). The only legitimate path is
+LinkedIn's official Talent/Jobs API, which requires a partner agreement with
+LinkedIn directly - not something obtainable via self-service signup. If that
+partnership is ever in place, add a `linkedin.ts` source implementing the
+same `JobSource` interface; nothing else in the app needs to change.
+
+Other real options if you want more coverage (each needs your own signup /
+API key - see each provider's site): Adzuna, JSearch/RapidAPI, USAJobs (US
+federal only), or per-company Greenhouse/Lever job board endpoints for
+specific employers you want to track.
 
 ## Scripts
 
