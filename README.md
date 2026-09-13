@@ -49,6 +49,7 @@ it comes from authenticated database records. See `supabase/migrations/`.
    supabase/migrations/0001_init.sql
    supabase/migrations/0002_storage.sql
    supabase/migrations/0003_job_sources_seed.sql
+   supabase/migrations/0004_jsearch_source_seed.sql
    ```
 
 4. Start the dev server:
@@ -77,7 +78,19 @@ so adding a source is implementing one function and registering it in
 - **Remotive** (`sources/remotive.ts`) - free, public, no API key needed,
   remote jobs only. Remotive's terms require crediting them and linking back
   to the original listing wherever it's shown, which every discovered job
-  card does. Don't remove that attribution.
+  card does. Don't remove that attribution. Its free API returns a small
+  fixed pool (~16 jobs) regardless of query params - it's a real source, just
+  a thin one.
+- **JSearch** (`sources/jsearch.ts`, via RapidAPI) - aggregates listings from
+  LinkedIn, Indeed, Glassdoor, ZipRecruiter and others through Google for
+  Jobs' index (not a scrape of any of those sites directly - JSearch is the
+  licensed intermediary). Needs a `RAPIDAPI_KEY` subscribed to the JSearch
+  API (rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch, free Basic plan).
+  Uses the `/search-v2` endpoint - `/search` 404s even with a valid
+  subscription on the current plan; re-check RapidAPI's dashboard for this
+  app if it starts failing, since they've changed JSearch's endpoint shape
+  before. Free tier is metered (~200 requests/month); the daily cron makes
+  one request per day for this source.
 
 **LinkedIn is deliberately not a source and never will be built as a scrape.**
 LinkedIn's Terms of Service explicitly prohibit scraping their job listings,
@@ -89,9 +102,9 @@ partnership is ever in place, add a `linkedin.ts` source implementing the
 same `JobSource` interface; nothing else in the app needs to change.
 
 Other real options if you want more coverage (each needs your own signup /
-API key - see each provider's site): Adzuna, JSearch/RapidAPI, USAJobs (US
-federal only), or per-company Greenhouse/Lever job board endpoints for
-specific employers you want to track.
+API key - see each provider's site): Adzuna, USAJobs (US federal only), or
+per-company Greenhouse/Lever job board endpoints for specific employers you
+want to track.
 
 ### Daily refresh
 

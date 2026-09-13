@@ -1,4 +1,5 @@
 import { remotiveSource } from "./remotive";
+import { jsearchSource } from "./jsearch";
 import type { JobSource } from "./types";
 
 /**
@@ -6,6 +7,6 @@ import type { JobSource } from "./types";
  * and listing it here - nothing else needs to change (search UI, dedup,
  * and storage are all source-agnostic already).
  */
-export const jobSources: JobSource[] = [remotiveSource];
+export const jobSources: JobSource[] = [remotiveSource, jsearchSource];
 
 export type { JobSource, JobSearchCriteria, DiscoveredJob } from "./types";
