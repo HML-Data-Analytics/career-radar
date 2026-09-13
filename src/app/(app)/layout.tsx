@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { SidebarNav } from "@/components/app-shell/sidebar-nav";
 import { TopBar } from "@/components/app-shell/top-bar";
+import { BottomNav } from "@/components/app-shell/bottom-nav";
 
 export default async function AppLayout({
   children,
@@ -24,12 +24,10 @@ export default async function AppLayout({
     .maybeSingle();
 
   return (
-    <div className="mx-auto flex w-full max-w-[1600px] gap-4 p-4">
-      <SidebarNav />
-      <div className="flex min-w-0 flex-1 flex-col gap-4">
-        <TopBar email={user.email ?? ""} firstName={profile?.first_name} />
-        <main className="flex-1">{children}</main>
-      </div>
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 p-3 pb-24 sm:gap-4 sm:p-4 sm:pb-28">
+      <TopBar email={user.email ?? ""} firstName={profile?.first_name} />
+      <main className="flex-1">{children}</main>
+      <BottomNav />
     </div>
   );
 }

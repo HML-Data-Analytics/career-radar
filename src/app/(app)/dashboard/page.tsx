@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/empty-state";
+import { SetupChecklist } from "@/components/dashboard/setup-checklist";
 import { Flame, Sparkles, CalendarClock, TriangleAlert } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -44,6 +45,8 @@ export default async function DashboardPage() {
           </p>
         ) : null}
       </div>
+
+      <SetupChecklist progress={data.setupProgress} />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">

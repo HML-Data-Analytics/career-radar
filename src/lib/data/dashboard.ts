@@ -10,6 +10,10 @@ export async function getDashboardData(userId: string) {
     { data: careerGaps },
     { data: applicationStats },
     { data: careerProfile },
+    { count: experienceCount },
+    { count: masterResumeCount },
+    { count: preferencesCount },
+    { count: jobMatchCount },
   ] = await Promise.all([
     supabase
       .from("job_matches")
@@ -41,6 +45,22 @@ export async function getDashboardData(userId: string) {
       .select("career_direction, career_ambition")
       .eq("user_id", userId)
       .maybeSingle(),
+    supabase
+      .from("career_experiences")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId),
+    supabase
+      .from("master_resumes")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId),
+    supabase
+      .from("career_preferences")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId),
+    supabase
+      .from("job_matches")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId),
   ]);
 
   const totalApplications = applicationStats?.length ?? 0;
@@ -62,5 +82,12 @@ export async function getDashboardData(userId: string) {
       offers,
     },
     careerDirection: careerProfile?.career_direction ?? null,
+    setupProgress: {
+      hasCareerProfile: !!careerProfile,
+      hasExperience: (experienceCount ?? 0) > 0,
+      hasResume: (masterResumeCount ?? 0) > 0,
+      hasPreferences: (preferencesCount ?? 0) > 0,
+      hasAnalyzedJob: (jobMatchCount ?? 0) > 0,
+    },
   };
 }
