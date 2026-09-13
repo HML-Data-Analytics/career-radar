@@ -180,3 +180,92 @@ export async function toggleEvidenceVerifiedAction(id: string, verified: boolean
     .eq("user_id", user.id);
   revalidatePath("/career-dna");
 }
+
+/**
+ * Removes exact duplicate rows already sitting in Career DNA (e.g. from
+ * importing the same resume more than once before dedup was added to the
+ * import itself). Keeps the oldest row of each duplicate group so
+ * verified/edited data isn't the thing that gets deleted, and never
+ * touches career_evidence (deliberately user-curated, not resume-derived).
+ */
+export async function dedupeCareerDnaAction() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  function findDuplicateIds<T extends { id: string; created_at: string }>(
+    rows: T[],
+    keyOf: (row: T) => string,
+  ): string[] {
+    const sorted = [...rows].sort((a, b) => a.created_at.localeCompare(b.created_at));
+    const seen = new Set<string>();
+    const duplicateIds: string[] = [];
+    for (const row of sorted) {
+      const key = keyOf(row);
+      if (seen.has(key)) {
+        duplicateIds.push(row.id);
+      } else {
+        seen.add(key);
+      }
+    }
+    return duplicateIds;
+  }
+
+  const [
+    { data: experiences },
+    { data: skills },
+    { data: certifications },
+    { data: education },
+  ] = await Promise.all([
+    supabase
+      .from("career_experiences")
+      .select("id, created_at, company, title, start_date")
+      .eq("user_id", user.id),
+    supabase.from("career_skills").select("id, created_at, skill").eq("user_id", user.id),
+    supabase
+      .from("career_certifications")
+      .select("id, created_at, name")
+      .eq("user_id", user.id),
+    supabase
+      .from("career_education")
+      .select("id, created_at, institution, degree")
+      .eq("user_id", user.id),
+  ]);
+
+  const duplicateIds = {
+    career_experiences: findDuplicateIds(experiences ?? [], (e) =>
+      [e.company, e.title, e.start_date ?? ""].join("|").toLowerCase().trim(),
+    ),
+    career_skills: findDuplicateIds(skills ?? [], (s) => s.skill.toLowerCase().trim()),
+    career_certifications: findDuplicateIds(certifications ?? [], (c) =>
+      c.name.toLowerCase().trim(),
+    ),
+    career_education: findDuplicateIds(education ?? [], (e) =>
+      [e.institution, e.degree ?? ""].join("|").toLowerCase().trim(),
+    ),
+  };
+
+  const totalDuplicates = Object.values(duplicateIds).reduce((sum, ids) => sum + ids.length, 0);
+  if (totalDuplicates === 0) {
+    return { success: true, removed: 0 };
+  }
+
+  const errors: string[] = [];
+  for (const [table, ids] of Object.entries(duplicateIds) as [
+    keyof typeof duplicateIds,
+    string[],
+  ][]) {
+    if (ids.length === 0) continue;
+    const { error } = await supabase.from(table).delete().in("id", ids);
+    if (error) errors.push(error.message);
+  }
+
+  if (errors.length > 0) {
+    return { error: errors.join(" | ") };
+  }
+
+  revalidatePath("/career-dna");
+  return { success: true, removed: totalDuplicates };
+}

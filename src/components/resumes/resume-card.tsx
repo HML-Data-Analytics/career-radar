@@ -12,6 +12,7 @@ import {
   deleteResumeAction,
 } from "@/lib/actions/resumes";
 import { ParsedResumePreview } from "@/components/resumes/parsed-resume-preview";
+import { ConfirmDeleteDialog } from "@/components/confirm-delete-dialog";
 import type { ResumeQualityScore } from "@/lib/validations/resumeQuality";
 import type { ParsedResume } from "@/lib/validations/resumeParse";
 import { Sparkles, Import, Trash2, Star } from "lucide-react";
@@ -42,6 +43,7 @@ export function ResumeCard({ resume }: { resume: Resume }) {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const hasParsedContent =
     !!resume.parsed_content &&
@@ -110,10 +112,18 @@ export function ResumeCard({ resume }: { resume: Resume }) {
           variant="ghost"
           size="icon"
           disabled={isPending}
-          onClick={() => run("delete", () => deleteResumeAction(resume.id))}
+          onClick={() => setDeleteOpen(true)}
         >
           <Trash2 className="size-4" />
         </Button>
+        <ConfirmDeleteDialog
+          open={deleteOpen}
+          onOpenChange={setDeleteOpen}
+          title={`Delete "${resume.title}"?`}
+          description="This permanently deletes the uploaded file and its parsed data. This does not affect anything already imported into your Career DNA. This cannot be undone."
+          confirmLabel="Delete resume"
+          onConfirm={() => deleteResumeAction(resume.id)}
+        />
       </div>
 
       {parsed ? <ParsedResumePreview parsed={parsed} /> : null}
