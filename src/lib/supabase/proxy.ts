@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/signup", "/auth", "/api/auth", "/api/cron"];
+const PUBLIC_PATHS = ["/login", "/signup", "/auth"];
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -34,8 +34,12 @@ export async function updateSession(request: NextRequest) {
   const isPublicPath = PUBLIC_PATHS.some((path) =>
     request.nextUrl.pathname.startsWith(path),
   );
+  // API routes handle their own auth response (JSON 401, or a bearer-token
+  // check for cron) - redirecting them to /login would hand a download
+  // link or fetch() call an HTML login page instead of a clean error.
+  const isApiPath = request.nextUrl.pathname.startsWith("/api/");
 
-  if (!user && !isPublicPath && request.nextUrl.pathname !== "/") {
+  if (!user && !isPublicPath && !isApiPath && request.nextUrl.pathname !== "/") {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("next", request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);

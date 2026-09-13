@@ -6,7 +6,7 @@ import {
   approveTailoredResumeAction,
   scoreTailoredResumeQualityAction,
 } from "@/lib/actions/resumeTailor";
-import { CircleCheck, Sparkles } from "lucide-react";
+import { CircleCheck, Sparkles, Download } from "lucide-react";
 
 export function TailoredResumeActions({
   versionId,
@@ -32,6 +32,17 @@ export function TailoredResumeActions({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="glass gap-1.5 border-white/20"
+          render={
+            <a href={`/api/resumes/tailored/${versionId}/pdf`} download>
+              <Download className="size-3.5" />
+              Download PDF
+            </a>
+          }
+        />
         <Button
           variant="outline"
           size="sm"
