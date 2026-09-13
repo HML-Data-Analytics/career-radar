@@ -199,27 +199,87 @@ export async function importParsedResumeAction(resumeId: string) {
   // institution) and returns null for it per its own instructions - those
   // entries have nothing to key an experience/skill/cert/education record
   // on, so they're skipped here rather than failing the whole import.
-  const experiences = parsed.experiences.filter(
+  const namedExperiences = parsed.experiences.filter(
     (exp): exp is typeof exp & { company: string; title: string } =>
       !!exp.company && !!exp.title,
   );
-  const certifications = parsed.certifications.filter(
+  const namedCertifications = parsed.certifications.filter(
     (c): c is typeof c & { name: string } => !!c.name,
   );
-  const education = parsed.education.filter(
+  const namedEducation = parsed.education.filter(
     (e): e is typeof e & { institution: string } => !!e.institution,
   );
 
-  // Dedupe skills case-insensitively: the parser can still repeat a skill
-  // across sections despite being told not to, and re-running import
-  // against a resume that was already (partially) imported shouldn't
-  // create duplicate rows either.
-  const { data: existingSkills } = await supabase
-    .from("career_skills")
-    .select("skill")
-    .eq("user_id", user.id);
+  // Dedupe everything case-insensitively against what's already in Career
+  // DNA and against repeats within this same parse: the AI can repeat an
+  // entry across resume sections despite being told not to, and
+  // re-running import against an already-imported resume (or one parsed
+  // twice) shouldn't create duplicate rows either.
+  const [
+    { data: existingSkills },
+    { data: existingExperiences },
+    { data: existingCertifications },
+    { data: existingEducation },
+  ] = await Promise.all([
+    supabase.from("career_skills").select("skill").eq("user_id", user.id),
+    supabase
+      .from("career_experiences")
+      .select("company, title, start_date")
+      .eq("user_id", user.id),
+    supabase.from("career_certifications").select("name").eq("user_id", user.id),
+    supabase.from("career_education").select("institution, degree").eq("user_id", user.id),
+  ]);
+
   const existingSkillNames = new Set(
     (existingSkills ?? []).map((s) => s.skill.toLowerCase().trim()),
+  );
+  const existingExperienceKeys = new Set(
+    (existingExperiences ?? []).map((e) =>
+      [e.company, e.title, e.start_date ?? ""].join("|").toLowerCase().trim(),
+    ),
+  );
+  const existingCertificationNames = new Set(
+    (existingCertifications ?? []).map((c) => c.name.toLowerCase().trim()),
+  );
+  const existingEducationKeys = new Set(
+    (existingEducation ?? []).map((e) =>
+      [e.institution, e.degree ?? ""].join("|").toLowerCase().trim(),
+    ),
+  );
+
+  function dedupeBy<T>(
+    items: T[],
+    keyOf: (item: T) => string,
+    existingKeys: Set<string>,
+  ): { kept: T[]; duplicateCount: number } {
+    const seen = new Set<string>();
+    let duplicateCount = 0;
+    const kept = items.filter((item) => {
+      const key = keyOf(item);
+      if (existingKeys.has(key) || seen.has(key)) {
+        duplicateCount++;
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+    return { kept, duplicateCount };
+  }
+
+  const { kept: experiences, duplicateCount: duplicateExperienceCount } = dedupeBy(
+    namedExperiences,
+    (exp) => [exp.company, exp.title, exp.startDate ?? ""].join("|").toLowerCase().trim(),
+    existingExperienceKeys,
+  );
+  const { kept: certifications, duplicateCount: duplicateCertificationCount } = dedupeBy(
+    namedCertifications,
+    (c) => c.name.toLowerCase().trim(),
+    existingCertificationNames,
+  );
+  const { kept: education, duplicateCount: duplicateEducationCount } = dedupeBy(
+    namedEducation,
+    (e) => [e.institution, e.degree ?? ""].join("|").toLowerCase().trim(),
+    existingEducationKeys,
   );
 
   const seenSkillNames = new Set<string>();
@@ -322,11 +382,13 @@ export async function importParsedResumeAction(resumeId: string) {
     return { error: errors.join(" | ") };
   }
 
-  const skippedExperiences = parsed.experiences.length - experiences.length;
-  const skippedCertifications = parsed.certifications.length - certifications.length;
-  const skippedEducation = parsed.education.length - education.length;
+  const unnamedExperienceCount = parsed.experiences.length - namedExperiences.length;
+  const unnamedCertificationCount = parsed.certifications.length - namedCertifications.length;
+  const unnamedEducationCount = parsed.education.length - namedEducation.length;
   const totalUnnamedSkipped =
-    skippedExperiences + unnamedSkillCount + skippedCertifications + skippedEducation;
+    unnamedExperienceCount + unnamedSkillCount + unnamedCertificationCount + unnamedEducationCount;
+  const totalDuplicateSkipped =
+    duplicateExperienceCount + duplicateSkillCount + duplicateCertificationCount + duplicateEducationCount;
 
   if (
     experiences.length === 0 &&
@@ -334,10 +396,10 @@ export async function importParsedResumeAction(resumeId: string) {
     certifications.length === 0 &&
     education.length === 0
   ) {
-    return duplicateSkillCount > 0
+    return totalDuplicateSkipped > 0
       ? {
           error:
-            "Nothing new to import - all skills were already in your Career DNA, and there was no usable experience, certifications, or education.",
+            "Nothing new to import - everything usable in this resume is already in your Career DNA.",
         }
       : {
           error:
@@ -355,18 +417,21 @@ export async function importParsedResumeAction(resumeId: string) {
   const noteParts: string[] = [];
   if (totalUnnamedSkipped > 0) {
     const parts: string[] = [];
-    if (skippedExperiences > 0) parts.push(`${skippedExperiences} experience entr${skippedExperiences === 1 ? "y" : "ies"}`);
+    if (unnamedExperienceCount > 0) parts.push(`${unnamedExperienceCount} experience entr${unnamedExperienceCount === 1 ? "y" : "ies"}`);
     if (unnamedSkillCount > 0) parts.push(`${unnamedSkillCount} skill${unnamedSkillCount === 1 ? "" : "s"}`);
-    if (skippedCertifications > 0) parts.push(`${skippedCertifications} certification${skippedCertifications === 1 ? "" : "s"}`);
-    if (skippedEducation > 0) parts.push(`${skippedEducation} education entr${skippedEducation === 1 ? "y" : "ies"}`);
+    if (unnamedCertificationCount > 0) parts.push(`${unnamedCertificationCount} certification${unnamedCertificationCount === 1 ? "" : "s"}`);
+    if (unnamedEducationCount > 0) parts.push(`${unnamedEducationCount} education entr${unnamedEducationCount === 1 ? "y" : "ies"}`);
     noteParts.push(
       `couldn't identify a clear name for: ${parts.join(", ")} (add ${totalUnnamedSkipped === 1 ? "it" : "them"} manually, or edit the resume text and re-parse)`,
     );
   }
-  if (duplicateSkillCount > 0) {
-    noteParts.push(
-      `skipped ${duplicateSkillCount} skill${duplicateSkillCount === 1 ? "" : "s"} already in your Career DNA`,
-    );
+  if (totalDuplicateSkipped > 0) {
+    const parts: string[] = [];
+    if (duplicateExperienceCount > 0) parts.push(`${duplicateExperienceCount} experience entr${duplicateExperienceCount === 1 ? "y" : "ies"}`);
+    if (duplicateSkillCount > 0) parts.push(`${duplicateSkillCount} skill${duplicateSkillCount === 1 ? "" : "s"}`);
+    if (duplicateCertificationCount > 0) parts.push(`${duplicateCertificationCount} certification${duplicateCertificationCount === 1 ? "" : "s"}`);
+    if (duplicateEducationCount > 0) parts.push(`${duplicateEducationCount} education entr${duplicateEducationCount === 1 ? "y" : "ies"}`);
+    noteParts.push(`already in your Career DNA: ${parts.join(", ")}`);
   }
 
   if (noteParts.length > 0) {
