@@ -117,11 +117,33 @@ ${JSON.stringify(jsonSchema)}`;
     throw new Error("GenAI Brewery did not return valid JSON");
   }
 
-  return params.schema.parse(parsedJson);
+  return params.schema.parse(stripEmDashesDeep(parsedJson));
 }
 
 function stripCodeFence(value: string): string {
   const trimmed = value.trim();
   const fenced = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/);
   return fenced ? fenced[1] : trimmed;
+}
+
+/**
+ * Models default to em dashes stylistically no matter what the prompt
+ * says, so this is enforced in code rather than relying on instructions
+ * holding every time. Runs on every structured AI response before Zod
+ * validation, on every string field, no matter how deeply nested.
+ *   "fit — not just keywords" -> "fit - not just keywords"
+ */
+function stripEmDashesDeep<T>(value: T): T {
+  if (typeof value === "string") {
+    return value.replace(/\s*[—–]\s*/g, " - ") as T;
+  }
+  if (Array.isArray(value)) {
+    return value.map(stripEmDashesDeep) as T;
+  }
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([k, v]) => [k, stripEmDashesDeep(v)]),
+    ) as T;
+  }
+  return value;
 }
