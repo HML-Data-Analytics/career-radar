@@ -20,7 +20,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { EmptyState } from "@/components/empty-state";
-import { addSkillAction, deleteSkillAction } from "@/lib/actions/careerDna";
+import { addSkillAction, deleteSkillAction, clearSkillsAction } from "@/lib/actions/careerDna";
+import { ClearAllButton } from "@/components/career-dna/clear-all-button";
 import { Trash2 } from "lucide-react";
 
 type Skill = {
@@ -105,6 +106,10 @@ export function SkillList({ skills }: { skills: Skill[] }) {
       {skills.length === 0 ? (
         <EmptyState title="No skills added yet" description="Add skills with verified evidence to strengthen matching." />
       ) : (
+        <>
+        <div className="flex justify-end">
+          <ClearAllButton itemLabel="skills" count={skills.length} onConfirm={clearSkillsAction} />
+        </div>
         <div className="glass-panel flex flex-col divide-y divide-border overflow-hidden">
           {grouped.map(([category, categorySkills]) => (
             <div key={category}>
@@ -166,6 +171,7 @@ export function SkillList({ skills }: { skills: Skill[] }) {
             </div>
           ))}
         </div>
+        </>
       )}
 
       <form action={formAction} className="glass flex flex-col gap-4 rounded-xl p-4 sm:flex-row sm:items-end sm:flex-wrap">

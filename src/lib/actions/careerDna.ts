@@ -269,3 +269,45 @@ export async function dedupeCareerDnaAction() {
   revalidatePath("/career-dna");
   return { success: true, removed: totalDuplicates };
 }
+
+export async function clearExperienceAction() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const { error } = await supabase.from("career_experiences").delete().eq("user_id", user.id);
+  if (error) return { error: error.message };
+
+  revalidatePath("/career-dna");
+  return { success: true };
+}
+
+export async function clearSkillsAction() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const { error } = await supabase.from("career_skills").delete().eq("user_id", user.id);
+  if (error) return { error: error.message };
+
+  revalidatePath("/career-dna");
+  return { success: true };
+}
+
+export async function clearEvidenceAction() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const { error } = await supabase.from("career_evidence").delete().eq("user_id", user.id);
+  if (error) return { error: error.message };
+
+  revalidatePath("/career-dna");
+  return { success: true };
+}

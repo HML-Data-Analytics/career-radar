@@ -18,7 +18,9 @@ import {
   addEvidenceAction,
   deleteEvidenceAction,
   toggleEvidenceVerifiedAction,
+  clearEvidenceAction,
 } from "@/lib/actions/careerDna";
+import { ClearAllButton } from "@/components/career-dna/clear-all-button";
 import { Trash2, ShieldCheck, ShieldQuestion } from "lucide-react";
 
 type Evidence = {
@@ -59,6 +61,10 @@ export function EvidenceList({ evidence }: { evidence: Evidence[] }) {
           description="Add proof of projects, achievements, and results - this keeps every AI-generated claim truthful."
         />
       ) : (
+        <>
+        <div className="flex justify-end">
+          <ClearAllButton itemLabel="evidence items" count={evidence.length} onConfirm={clearEvidenceAction} />
+        </div>
         <ul className="flex flex-col gap-2">
           {evidence.map((item) => (
             <li key={item.id} className="glass flex items-start justify-between gap-4 rounded-xl p-4">
@@ -105,6 +111,7 @@ export function EvidenceList({ evidence }: { evidence: Evidence[] }) {
             </li>
           ))}
         </ul>
+        </>
       )}
 
       <form action={formAction} className="glass flex flex-col gap-4 rounded-xl p-4">

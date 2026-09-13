@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,17 +24,25 @@ export function ConfirmDeleteDialog({
   title: string;
   description: string;
   confirmLabel?: string;
-  onConfirm: () => Promise<void> | void;
+  onConfirm: () => Promise<{ error?: string } | void> | { error?: string } | void;
 }) {
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) setError(null);
+        onOpenChange(next);
+      }}
+    >
       <DialogContent className="glass-strong">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
+        {error ? <p className="text-sm text-destructive">{error}</p> : null}
         <DialogFooter>
           <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isPending}>
             Cancel
@@ -44,7 +52,11 @@ export function ConfirmDeleteDialog({
             disabled={isPending}
             onClick={() =>
               startTransition(async () => {
-                await onConfirm();
+                const result = await onConfirm();
+                if (result && "error" in result && result.error) {
+                  setError(result.error);
+                  return;
+                }
                 onOpenChange(false);
               })
             }

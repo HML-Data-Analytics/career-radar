@@ -10,7 +10,9 @@ import { EmptyState } from "@/components/empty-state";
 import {
   addExperienceAction,
   deleteExperienceAction,
+  clearExperienceAction,
 } from "@/lib/actions/careerDna";
+import { ClearAllButton } from "@/components/career-dna/clear-all-button";
 import { formatExperienceDateRange } from "@/lib/formatDateRange";
 import { Trash2 } from "lucide-react";
 
@@ -42,6 +44,14 @@ export function ExperienceList({ experiences }: { experiences: Experience[] }) {
           description="Add roles from your career history to build your Career DNA."
         />
       ) : (
+        <>
+        <div className="flex justify-end">
+          <ClearAllButton
+            itemLabel="experience entries"
+            count={experiences.length}
+            onConfirm={clearExperienceAction}
+          />
+        </div>
         <ul className="glass-panel flex flex-col divide-y divide-border overflow-hidden">
           {experiences.map((exp) => {
             const bullets = [
@@ -92,6 +102,7 @@ export function ExperienceList({ experiences }: { experiences: Experience[] }) {
             );
           })}
         </ul>
+        </>
       )}
 
       <form action={formAction} className="glass flex flex-col gap-4 rounded-xl p-4">
