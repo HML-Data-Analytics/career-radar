@@ -80,7 +80,14 @@ export const jsearchSource: JobSource = {
 
     const params = new URLSearchParams({
       query,
-      num_pages: "1",
+      // Verified live (2026-09): num_pages costs the SAME single request
+      // against the RapidAPI quota regardless of value (confirmed via the
+      // x-ratelimit-requests-remaining response header), so higher values
+      // are "free" quota-wise - but each additional page adds real upstream
+      // latency (num_pages=10 took ~46s, close to this route's 60s
+      // maxDuration once Remotive's call and all the DB upserts are added
+      // on top). 3 pages (~26 jobs, a few seconds) is a safe margin.
+      num_pages: "3",
       date_posted: "all",
     });
     if (criteria.remotePreference === "remote") {
