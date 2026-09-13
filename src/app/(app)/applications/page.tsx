@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { EmptyState } from "@/components/empty-state";
@@ -35,10 +36,10 @@ export default async function ApplicationsPage() {
             const job = Array.isArray(app.jobs) ? app.jobs[0] : app.jobs;
             return (
               <li key={app.id} className="glass flex flex-wrap items-center justify-between gap-3 rounded-xl p-4">
-                <div className="min-w-0">
-                  <p className="truncate font-medium">{job?.title}</p>
+                <Link href={`/applications/${app.id}`} className="min-w-0 flex-1">
+                  <p className="truncate font-medium hover:underline">{job?.title}</p>
                   <p className="truncate text-sm text-muted-foreground">{job?.company}</p>
-                </div>
+                </Link>
                 <ApplicationStatusSelect applicationId={app.id} status={app.status} />
               </li>
             );
