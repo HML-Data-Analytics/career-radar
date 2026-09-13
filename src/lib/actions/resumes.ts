@@ -8,6 +8,7 @@ import { analyzeResumeQuality } from "@/lib/ai/resumeQualityAnalyzer";
 import { RESUME_PARSER_PROMPT_VERSION } from "@/lib/ai/promptVersions";
 import { RESUME_QUALITY_PROMPT_VERSION } from "@/lib/ai/resumeQualityAnalyzer";
 import { currentModelLabel } from "@/lib/ai/models";
+import { normalizeToDateOrNull } from "@/lib/dates";
 import type { FormActionState } from "@/lib/actions/careerProfile";
 
 export async function uploadResumeAction(
@@ -268,7 +269,11 @@ export async function importParsedResumeAction(resumeId: string) {
 
   const { kept: experiences, duplicateCount: duplicateExperienceCount } = dedupeBy(
     namedExperiences,
-    (exp) => [exp.company, exp.title, exp.startDate ?? ""].join("|").toLowerCase().trim(),
+    (exp) =>
+      [exp.company, exp.title, normalizeToDateOrNull(exp.startDate) ?? ""]
+        .join("|")
+        .toLowerCase()
+        .trim(),
     existingExperienceKeys,
   );
   const { kept: certifications, duplicateCount: duplicateCertificationCount } = dedupeBy(
@@ -324,8 +329,8 @@ export async function importParsedResumeAction(resumeId: string) {
         company: exp.company,
         title: exp.title,
         location: exp.location,
-        start_date: exp.startDate,
-        end_date: exp.isCurrent ? null : exp.endDate,
+        start_date: normalizeToDateOrNull(exp.startDate),
+        end_date: exp.isCurrent ? null : normalizeToDateOrNull(exp.endDate),
         is_current: exp.isCurrent,
         description: exp.description,
         responsibilities: exp.responsibilities,
@@ -354,7 +359,7 @@ export async function importParsedResumeAction(resumeId: string) {
         user_id: user.id,
         name: c.name,
         issuer: c.issuer,
-        issue_date: c.issueDate,
+        issue_date: normalizeToDateOrNull(c.issueDate),
       })),
     );
     if (error) errors.push(`Certifications: ${error.message}`);
@@ -367,8 +372,8 @@ export async function importParsedResumeAction(resumeId: string) {
         institution: e.institution,
         degree: e.degree,
         field: e.field,
-        start_date: e.startDate,
-        end_date: e.endDate,
+        start_date: normalizeToDateOrNull(e.startDate),
+        end_date: normalizeToDateOrNull(e.endDate),
       })),
     );
     if (error) errors.push(`Education: ${error.message}`);
