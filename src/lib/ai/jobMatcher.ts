@@ -1,7 +1,5 @@
-import { getOpenAI } from "@/lib/ai/openai";
-import { DEFAULT_MODEL } from "@/lib/ai/models";
+import { askStructured } from "@/lib/ai/genaiClient";
 import { jobMatchResultSchema, type JobMatchResult } from "@/lib/validations/jobMatch";
-import { zodTextFormat } from "openai/helpers/zod";
 
 const SYSTEM_PROMPT = `You are a career strategy analyst. You compare a candidate's verified career profile against a job description and produce a structured, honest assessment.
 
@@ -20,26 +18,9 @@ export async function analyzeJobMatch(input: {
   preferences: unknown;
   job: unknown;
 }): Promise<JobMatchResult> {
-  const client = getOpenAI();
-
-  const response = await client.responses.parse({
-    model: DEFAULT_MODEL,
-    input: [
-      { role: "system", content: SYSTEM_PROMPT },
-      {
-        role: "user",
-        content: JSON.stringify(input, null, 2),
-      },
-    ],
-    text: {
-      format: zodTextFormat(jobMatchResultSchema, "job_match_result"),
-    },
+  return askStructured({
+    systemPrompt: SYSTEM_PROMPT,
+    userContent: JSON.stringify(input, null, 2),
+    schema: jobMatchResultSchema,
   });
-
-  const parsed = response.output_parsed;
-  if (!parsed) {
-    throw new Error("Job matcher returned no structured output");
-  }
-
-  return jobMatchResultSchema.parse(parsed);
 }

@@ -17,7 +17,7 @@ labeled "Coming in Phase N" rather than shipped as non-functional UI.
 - Tailwind CSS v4
 - shadcn/ui (base-ui primitives)
 - Supabase (Postgres, Auth, Storage, Row Level Security)
-- OpenAI (structured outputs via Zod schemas)
+- Heineken GenAI Brewery (internal AI gateway; structured outputs validated with Zod)
 - Vercel
 
 ## Multi-tenancy
@@ -40,7 +40,7 @@ it comes from authenticated database records. See `supabase/migrations/`.
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY` (server-only — never expose to the client)
-   - `OPENAI_API_KEY` (server-only)
+   - `GENAI_API_KEY` and `GENAI_MODEL` (server-only — see "AI provider" below)
 
 3. Run the migrations against your Supabase project (via the Supabase CLI or
    SQL editor), in order:
@@ -55,6 +55,17 @@ it comes from authenticated database records. See `supabase/migrations/`.
    ```bash
    npm run dev
    ```
+
+## AI provider
+
+AI calls (job parsing, job matching, etc.) go through Heineken's internal
+GenAI Brewery gateway (`genai.heineken.com`), not a public model API — see
+`src/lib/ai/genaiClient.ts`. This gateway is **internal-network only**: it
+only resolves on the HML network or VPN. A request from a server that isn't
+on that network (including Vercel's default runtime) will time out rather
+than fail cleanly, so AI features only work when the deploying server can
+reach the HML network. `GENAI_MODEL` is required with no default — a wrong
+or missing model id also fails as a timeout, not a clear error.
 
 ## Scripts
 

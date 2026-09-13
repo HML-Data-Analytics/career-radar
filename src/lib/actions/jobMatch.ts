@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { analyzeJobMatch } from "@/lib/ai/jobMatcher";
 import { JOB_MATCHER_PROMPT_VERSION } from "@/lib/ai/promptVersions";
-import { DEFAULT_MODEL } from "@/lib/ai/models";
+import { currentModelLabel } from "@/lib/ai/models";
 
 export async function analyzeJobMatchAction(jobId: string) {
   const supabase = await createClient();
@@ -50,8 +50,10 @@ export async function analyzeJobMatchAction(jobId: string) {
       preferences: preferences ?? {},
       job,
     });
-  } catch {
-    return { error: "Failed to analyze this job. Please try again." };
+  } catch (err) {
+    return {
+      error: err instanceof Error ? err.message : "Failed to analyze this job. Please try again.",
+    };
   }
 
   const { error: upsertError } = await supabase.from("job_matches").upsert(
@@ -72,7 +74,7 @@ export async function analyzeJobMatchAction(jobId: string) {
       should_apply: result.shouldApply,
       should_apply_reasons: result.shouldApplyReasons,
       prompt_version: JOB_MATCHER_PROMPT_VERSION,
-      model: DEFAULT_MODEL,
+      model: currentModelLabel(),
     },
     { onConflict: "user_id,job_id" },
   );
@@ -84,7 +86,7 @@ export async function analyzeJobMatchAction(jobId: string) {
   await supabase.from("ai_generations").insert({
     user_id: user.id,
     type: "job_matcher",
-    model: DEFAULT_MODEL,
+    model: currentModelLabel(),
     prompt_version: JOB_MATCHER_PROMPT_VERSION,
     input_reference: { jobId },
     output: result,

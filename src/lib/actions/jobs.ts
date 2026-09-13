@@ -8,7 +8,7 @@ import { fetchJobUrlText } from "@/lib/jobs/fetchJobUrl";
 import { parseJobDescription } from "@/lib/ai/jobParser";
 import { computeJobContentHash } from "@/lib/jobs/contentHash";
 import { JOB_PARSER_PROMPT_VERSION } from "@/lib/ai/promptVersions";
-import { DEFAULT_MODEL } from "@/lib/ai/models";
+import { currentModelLabel } from "@/lib/ai/models";
 import type { FormActionState } from "@/lib/actions/careerProfile";
 
 export async function submitJobAction(
@@ -50,8 +50,13 @@ export async function submitJobAction(
   let parsedJob;
   try {
     parsedJob = await parseJobDescription(rawText);
-  } catch {
-    return { error: "Could not parse this job description. Please check the text and try again." };
+  } catch (err) {
+    return {
+      error:
+        err instanceof Error
+          ? err.message
+          : "Could not parse this job description. Please check the text and try again.",
+    };
   }
 
   const contentHash = computeJobContentHash({
@@ -110,7 +115,7 @@ export async function submitJobAction(
   await supabase.from("ai_generations").insert({
     user_id: user.id,
     type: "job_parser",
-    model: DEFAULT_MODEL,
+    model: currentModelLabel(),
     prompt_version: JOB_PARSER_PROMPT_VERSION,
     input_reference: { jobUrl },
     output: parsedJob,
