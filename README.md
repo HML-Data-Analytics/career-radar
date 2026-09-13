@@ -93,6 +93,27 @@ API key - see each provider's site): Adzuna, JSearch/RapidAPI, USAJobs (US
 federal only), or per-company Greenhouse/Lever job board endpoints for
 specific employers you want to track.
 
+### Daily refresh
+
+New listings aren't fetched per-user on demand - a Vercel Cron job
+(`vercel.json`, `src/app/api/cron/refresh-jobs/route.ts`) runs once a day,
+pulls from every registered source, upserts into the shared `jobs` table,
+and deletes jobs older than 30 days that nobody has saved or applied to.
+Users just browse/filter what's already in the DB, filtered against their
+saved preferences - this is far friendlier to a source like Remotive, whose
+terms ask for a handful of requests per day site-wide, not per user.
+
+To enable it: set a `CRON_SECRET` (16+ random characters) as a Vercel
+project environment variable. Vercel automatically sends it as
+`Authorization: Bearer <value>` on every cron invocation, which the route
+checks against `process.env.CRON_SECRET`. Cron jobs only run on deployed
+Vercel projects, not locally - to test the route locally, call it manually
+with the header set:
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/refresh-jobs
+```
+
 ## Scripts
 
 - `npm run dev` - start the dev server
