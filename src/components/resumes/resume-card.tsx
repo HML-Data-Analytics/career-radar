@@ -11,7 +11,9 @@ import {
   setActiveResumeAction,
   deleteResumeAction,
 } from "@/lib/actions/resumes";
+import { ParsedResumePreview } from "@/components/resumes/parsed-resume-preview";
 import type { ResumeQualityScore } from "@/lib/validations/resumeQuality";
+import type { ParsedResume } from "@/lib/validations/resumeParse";
 import { Sparkles, Import, Trash2, Star } from "lucide-react";
 
 type Resume = {
@@ -20,7 +22,9 @@ type Resume = {
   file_type: string | null;
   is_active: boolean;
   created_at: string;
-  parsed_content: (Record<string, unknown> & { qualityScore?: ResumeQualityScore }) | null;
+  parsed_content:
+    | (Partial<ParsedResume> & { qualityScore?: ResumeQualityScore })
+    | null;
 };
 
 const QUALITY_LABELS: { key: keyof ResumeQualityScore; label: string }[] = [
@@ -43,6 +47,20 @@ export function ResumeCard({ resume }: { resume: Resume }) {
     !!resume.parsed_content &&
     Object.keys(resume.parsed_content).some((k) => k !== "qualityScore");
   const quality = resume.parsed_content?.qualityScore;
+  const parsed: ParsedResume | null = hasParsedContent
+    ? {
+        headline: resume.parsed_content?.headline ?? null,
+        professionalSummary: resume.parsed_content?.professionalSummary ?? null,
+        currentTitle: resume.parsed_content?.currentTitle ?? null,
+        currentCompany: resume.parsed_content?.currentCompany ?? null,
+        currentLocation: resume.parsed_content?.currentLocation ?? null,
+        yearsOfExperience: resume.parsed_content?.yearsOfExperience ?? null,
+        experiences: resume.parsed_content?.experiences ?? [],
+        skills: resume.parsed_content?.skills ?? [],
+        certifications: resume.parsed_content?.certifications ?? [],
+        education: resume.parsed_content?.education ?? [],
+      }
+    : null;
 
   function run(
     action: string,
@@ -97,6 +115,8 @@ export function ResumeCard({ resume }: { resume: Resume }) {
           <Trash2 className="size-4" />
         </Button>
       </div>
+
+      {parsed ? <ParsedResumePreview parsed={parsed} /> : null}
 
       {quality ? (
         <div className="flex flex-col gap-3">

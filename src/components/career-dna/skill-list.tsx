@@ -1,10 +1,17 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
@@ -25,35 +32,98 @@ type Skill = {
   verified: boolean;
 };
 
+const CATEGORY_ORDER = [
+  "technical",
+  "leadership",
+  "domain",
+  "tool",
+  "soft",
+  "language",
+  "other",
+];
+
+const CATEGORY_LABELS: Record<string, string> = {
+  technical: "Technical",
+  leadership: "Leadership",
+  domain: "Domain",
+  tool: "Tools",
+  soft: "Soft skills",
+  language: "Languages",
+  other: "Other",
+};
+
+function normalizeCategory(category: string | null): string {
+  if (!category) return "other";
+  const key = category.toLowerCase().trim();
+  return key in CATEGORY_LABELS ? key : "other";
+}
+
+function groupByCategory(skills: Skill[]): Array<[string, Skill[]]> {
+  const groups = new Map<string, Skill[]>();
+  for (const skill of skills) {
+    const key = normalizeCategory(skill.category);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(skill);
+  }
+  return CATEGORY_ORDER.filter((key) => groups.has(key)).map((key) => [
+    key,
+    groups.get(key)!.sort((a, b) => a.skill.localeCompare(b.skill)),
+  ]);
+}
+
 export function SkillList({ skills }: { skills: Skill[] }) {
   const [state, formAction, isPending] = useActionState(addSkillAction, null);
+  const grouped = useMemo(() => groupByCategory(skills), [skills]);
 
   return (
     <div className="flex flex-col gap-4">
       {skills.length === 0 ? (
         <EmptyState title="No skills added yet" description="Add skills with verified evidence to strengthen matching." />
       ) : (
-        <ul className="flex flex-wrap gap-2">
-          {skills.map((skill) => (
-            <li key={skill.id}>
-              <Badge variant="secondary" className="glass gap-2 py-1.5 pl-3 pr-1.5">
-                {skill.skill}
-                {skill.proficiency ? (
-                  <span className="text-muted-foreground">· {skill.proficiency}</span>
-                ) : null}
-                <form action={deleteSkillAction.bind(null, skill.id)}>
-                  <button
-                    type="submit"
-                    aria-label={`Remove ${skill.skill}`}
-                    className="-m-2 p-2"
-                  >
-                    <Trash2 className="size-3.5 text-muted-foreground hover:text-destructive" />
-                  </button>
-                </form>
-              </Badge>
-            </li>
+        <div className="glass-panel flex flex-col divide-y divide-border overflow-hidden">
+          {grouped.map(([category, categorySkills]) => (
+            <div key={category} className="overflow-x-auto">
+              <p className="px-4 pt-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                {CATEGORY_LABELS[category]} ({categorySkills.length})
+              </p>
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead>Skill</TableHead>
+                    <TableHead>Proficiency</TableHead>
+                    <TableHead>Years</TableHead>
+                    <TableHead className="w-10" />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {categorySkills.map((skill) => (
+                    <TableRow key={skill.id}>
+                      <TableCell className="font-medium">{skill.skill}</TableCell>
+                      <TableCell className="text-muted-foreground capitalize">
+                        {skill.proficiency ?? "-"}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {skill.years_experience ?? "-"}
+                      </TableCell>
+                      <TableCell>
+                        <form action={deleteSkillAction.bind(null, skill.id)}>
+                          <Button
+                            type="submit"
+                            variant="ghost"
+                            size="icon-sm"
+                            aria-label={`Remove ${skill.skill}`}
+                          >
+                            <Trash2 className="size-3.5 text-muted-foreground hover:text-destructive" />
+                          </Button>
+                        </form>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
 
       <form action={formAction} className="glass flex flex-col gap-4 rounded-xl p-4 sm:flex-row sm:items-end sm:flex-wrap">
@@ -63,7 +133,18 @@ export function SkillList({ skills }: { skills: Skill[] }) {
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="category">Category</Label>
-          <Input id="category" name="category" placeholder="Technical, Leadership…" className="glass border-white/20" />
+          <Select name="category">
+            <SelectTrigger id="category" className="glass w-40 border-white/20">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              {CATEGORY_ORDER.map((key) => (
+                <SelectItem key={key} value={key}>
+                  {CATEGORY_LABELS[key]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="proficiency">Proficiency</Label>
