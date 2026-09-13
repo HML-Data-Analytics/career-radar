@@ -32,6 +32,8 @@ type Prefs = {
   remote_preference: string | null;
 } | null;
 
+const AI_RECOMMENDED = new Set(["RECOMMEND", "STRONGLY_RECOMMEND"]);
+
 export function JobsList({
   savedJobs,
   matchByJobId,
@@ -44,15 +46,24 @@ export function JobsList({
   hasPreferences: boolean;
 }) {
   const [prioritizeMatches, setPrioritizeMatches] = useState(hasPreferences);
+  const [aiSuggestedOnly, setAiSuggestedOnly] = useState(false);
+
+  const filtered = useMemo(() => {
+    if (!aiSuggestedOnly) return savedJobs;
+    return savedJobs.filter((saved) => {
+      const recommendation = matchByJobId[saved.job.id]?.recommendation;
+      return recommendation ? AI_RECOMMENDED.has(recommendation) : false;
+    });
+  }, [savedJobs, aiSuggestedOnly, matchByJobId]);
 
   const sorted = useMemo(() => {
-    if (!prioritizeMatches) return savedJobs;
-    return [...savedJobs].sort((a, b) => {
+    if (!prioritizeMatches) return filtered;
+    return [...filtered].sort((a, b) => {
       const aMatch = jobMatchesPreferences(a.job, prefs) ? 1 : 0;
       const bMatch = jobMatchesPreferences(b.job, prefs) ? 1 : 0;
       return bMatch - aMatch;
     });
-  }, [savedJobs, prioritizeMatches, prefs]);
+  }, [filtered, prioritizeMatches, prefs]);
 
   if (savedJobs.length === 0) {
     return <EmptyState title="No jobs yet" description="Jobs you add will show up here with their match scores." />;
@@ -60,23 +71,45 @@ export function JobsList({
 
   return (
     <div className="flex flex-col gap-3">
-      {hasPreferences ? (
-        <div className="flex items-center justify-end gap-2">
-          <Label htmlFor="prioritize-matches" className="text-sm text-muted-foreground">
-            Prioritize jobs matching my preferences
+      <div className="flex flex-col items-end gap-2">
+        <div className="flex items-center gap-2">
+          <Label htmlFor="ai-suggested-only" className="text-sm text-muted-foreground">
+            AI Suggested only
           </Label>
           <Switch
-            id="prioritize-matches"
-            checked={prioritizeMatches}
-            onCheckedChange={setPrioritizeMatches}
+            id="ai-suggested-only"
+            checked={aiSuggestedOnly}
+            onCheckedChange={setAiSuggestedOnly}
           />
         </div>
+        {hasPreferences ? (
+          <div className="flex items-center gap-2">
+            <Label htmlFor="prioritize-matches" className="text-sm text-muted-foreground">
+              Prioritize jobs matching my preferences
+            </Label>
+            <Switch
+              id="prioritize-matches"
+              checked={prioritizeMatches}
+              onCheckedChange={setPrioritizeMatches}
+            />
+          </div>
+        ) : null}
+      </div>
+
+      {aiSuggestedOnly && sorted.length === 0 ? (
+        <EmptyState
+          title="No AI-recommended jobs yet"
+          description="Open a saved job and analyze it to get an AI recommendation. Jobs the AI recommends or strongly recommends will show up here."
+        />
       ) : null}
 
       <ul className="flex flex-col gap-2">
         {sorted.map((saved) => {
           const match = matchByJobId[saved.job.id];
           const matchesPrefs = jobMatchesPreferences(saved.job, prefs);
+          const isAiSuggested = match?.recommendation
+            ? AI_RECOMMENDED.has(match.recommendation)
+            : false;
           return (
             <li key={saved.id}>
               <Link
@@ -86,6 +119,9 @@ export function JobsList({
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="truncate font-medium">{saved.job.title}</p>
+                    {isAiSuggested ? (
+                      <Badge className="shrink-0 text-xs">AI Suggested</Badge>
+                    ) : null}
                     {hasPreferences && matchesPrefs ? (
                       <Badge variant="outline" className="shrink-0 text-xs">
                         Matches your preferences
