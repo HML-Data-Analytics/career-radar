@@ -82,13 +82,14 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.72 0.16 280 / 60%);
 
-  /* Glassmorphism tokens */
-  --glass-bg: oklch(1 0 0 / 8%);
-  --glass-bg-strong: oklch(1 0 0 / 14%);
-  --glass-border: oklch(1 0 0 / 18%);
-  --glass-highlight: oklch(1 0 0 / 35%);
-  --glass-shadow: oklch(0.1 0.02 264 / 45%);
-  --glass-blur: 20px;
+  /* Liquid Glass tokens */
+  --glass-bg: oklch(1 0 0 / 10%);
+  --glass-bg-strong: oklch(1 0 0 / 16%);
+  --glass-border: oklch(1 0 0 / 22%);
+  --glass-highlight: oklch(1 0 0 / 55%);
+  --glass-sheen: oklch(1 0 0 / 14%);
+  --glass-shadow: oklch(0.08 0.02 264 / 28%);
+  --glass-blur: 28px;
 }
 
 :root:not([data-theme="light"]) {
@@ -124,12 +125,13 @@
     --sidebar-border: oklch(0.2 0.03 264 / 10%);
     --sidebar-ring: oklch(0.55 0.18 280 / 50%);
 
-    --glass-bg: oklch(1 0 0 / 45%);
-    --glass-bg-strong: oklch(1 0 0 / 65%);
-    --glass-border: oklch(1 0 0 / 60%);
-    --glass-highlight: oklch(1 0 0 / 80%);
-    --glass-shadow: oklch(0.2 0.03 264 / 15%);
-    --glass-blur: 20px;
+    --glass-bg: oklch(1 0 0 / 50%);
+    --glass-bg-strong: oklch(1 0 0 / 68%);
+    --glass-border: oklch(1 0 0 / 70%);
+    --glass-highlight: oklch(1 0 0 / 90%);
+    --glass-sheen: oklch(1 0 0 / 45%);
+    --glass-shadow: oklch(0.2 0.03 264 / 12%);
+    --glass-blur: 28px;
   }
 }
 
@@ -161,12 +163,13 @@
   --sidebar-border: oklch(0.2 0.03 264 / 10%);
   --sidebar-ring: oklch(0.55 0.18 280 / 50%);
 
-  --glass-bg: oklch(1 0 0 / 45%);
-  --glass-bg-strong: oklch(1 0 0 / 65%);
-  --glass-border: oklch(1 0 0 / 60%);
-  --glass-highlight: oklch(1 0 0 / 80%);
-  --glass-shadow: oklch(0.2 0.03 264 / 15%);
-  --glass-blur: 20px;
+  --glass-bg: oklch(1 0 0 / 50%);
+  --glass-bg-strong: oklch(1 0 0 / 68%);
+  --glass-border: oklch(1 0 0 / 70%);
+  --glass-highlight: oklch(1 0 0 / 90%);
+  --glass-sheen: oklch(1 0 0 / 45%);
+  --glass-shadow: oklch(0.2 0.03 264 / 12%);
+  --glass-blur: 28px;
 }
 
 :root[data-theme="dark"] {
@@ -181,9 +184,9 @@
     @apply bg-background text-foreground;
     min-height: 100dvh;
     background-image:
-      radial-gradient(60% 50% at 12% 8%, oklch(0.55 0.18 280 / 35%) 0%, transparent 60%),
-      radial-gradient(55% 45% at 90% 15%, oklch(0.6 0.15 190 / 30%) 0%, transparent 60%),
-      radial-gradient(70% 60% at 50% 100%, oklch(0.5 0.16 320 / 22%) 0%, transparent 65%);
+      radial-gradient(50% 40% at 15% 0%, oklch(0.55 0.15 280 / 24%) 0%, transparent 65%),
+      radial-gradient(45% 38% at 100% 20%, oklch(0.6 0.12 190 / 20%) 0%, transparent 65%),
+      radial-gradient(55% 50% at 40% 100%, oklch(0.5 0.13 320 / 14%) 0%, transparent 70%);
     background-attachment: fixed;
   }
   html {
@@ -192,34 +195,52 @@
 }
 
 @layer components {
+  /*
+   * Liquid Glass: a neutral, lensed surface rather than a tinted panel.
+   * Layering, from back to front:
+   *   1. backdrop-filter blur+saturate reads what's behind it
+   *   2. background is a top-lit gradient (brighter sheen at the top edge,
+   *      settling to the base tint), not a flat fill
+   *   3. box-shadow stacks a crisp 1px top highlight, a soft inner glow,
+   *      and a very light, tight drop shadow — glass floats, it doesn't sit
+   *      in a heavy shadow
+   */
   .glass {
-    background: var(--glass-bg);
+    background: linear-gradient(180deg, var(--glass-sheen), var(--glass-bg) 40%);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
     box-shadow:
-      0 8px 32px var(--glass-shadow),
-      inset 0 1px 0 var(--glass-highlight);
+      inset 0 1px 0 var(--glass-highlight),
+      inset 0 0 0 1px oklch(1 0 0 / 4%),
+      0 1px 2px var(--glass-shadow),
+      0 8px 24px -8px var(--glass-shadow);
+    border-radius: var(--radius-xl);
   }
 
   .glass-strong {
-    background: var(--glass-bg-strong);
+    background: linear-gradient(180deg, var(--glass-sheen), var(--glass-bg-strong) 45%);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
     box-shadow:
-      0 8px 32px var(--glass-shadow),
-      inset 0 1px 0 var(--glass-highlight);
+      inset 0 1px 0 var(--glass-highlight),
+      inset 0 0 0 1px oklch(1 0 0 / 6%),
+      0 1px 2px var(--glass-shadow),
+      0 12px 32px -10px var(--glass-shadow);
+    border-radius: var(--radius-xl);
   }
 
   .glass-panel {
-    background: var(--glass-bg);
+    background: linear-gradient(180deg, var(--glass-sheen), var(--glass-bg) 40%);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
     box-shadow:
-      0 8px 32px var(--glass-shadow),
-      inset 0 1px 0 var(--glass-highlight);
+      inset 0 1px 0 var(--glass-highlight),
+      inset 0 0 0 1px oklch(1 0 0 / 4%),
+      0 1px 2px var(--glass-shadow),
+      0 8px 24px -8px var(--glass-shadow);
     border-radius: var(--radius-2xl);
   }
 }
