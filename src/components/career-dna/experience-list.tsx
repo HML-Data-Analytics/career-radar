@@ -110,23 +110,23 @@ export function ExperienceList({ experiences }: { experiences: Experience[] }) {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <Label htmlFor="title">Title</Label>
-            <Input id="title" name="title" required className="glass border-white/20" />
+            <Input id="title" name="title" required />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="company">Company</Label>
-            <Input id="company" name="company" required className="glass border-white/20" />
+            <Input id="company" name="company" required />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="location">Location</Label>
-            <Input id="location" name="location" className="glass border-white/20" />
+            <Input id="location" name="location" />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="startDate">Start date</Label>
-            <Input id="startDate" name="startDate" type="date" className="glass border-white/20" />
+            <Input id="startDate" name="startDate" type="date" />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="endDate">End date</Label>
-            <Input id="endDate" name="endDate" type="date" className="glass border-white/20" />
+            <Input id="endDate" name="endDate" type="date" />
           </div>
           <div className="flex items-center justify-between rounded-xl px-1 py-2">
             <Label htmlFor="isCurrent">Current role</Label>
@@ -135,7 +135,7 @@ export function ExperienceList({ experiences }: { experiences: Experience[] }) {
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="description">Description</Label>
-          <Textarea id="description" name="description" rows={3} className="glass border-white/20" />
+          <Textarea id="description" name="description" rows={3} />
         </div>
         {state?.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
         <div>

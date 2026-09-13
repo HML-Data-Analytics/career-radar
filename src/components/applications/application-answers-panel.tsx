@@ -40,7 +40,6 @@ export function ApplicationAnswersPanel({
           placeholder="Paste an application question here…"
           rows={2}
           required
-          className="glass border-white/20"
         />
         <Button type="submit" disabled={isPending} className="w-fit gap-2">
           <Sparkles className="size-4" />
@@ -85,7 +84,6 @@ function AnswerCard({ answer }: { answer: Answer }) {
           setSaved(false);
         }}
         rows={4}
-        className="glass border-white/20"
       />
       <div className="flex flex-wrap items-center gap-2">
         <Button

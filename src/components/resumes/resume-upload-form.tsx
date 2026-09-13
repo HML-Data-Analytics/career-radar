@@ -19,7 +19,7 @@ export function ResumeUploadForm() {
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="title">Title (optional)</Label>
-        <Input id="title" name="title" placeholder="e.g. Master Resume 2026" className="glass border-white/20" />
+        <Input id="title" name="title" placeholder="e.g. Master Resume 2026" />
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="file">File</Label>
@@ -29,7 +29,7 @@ export function ResumeUploadForm() {
           type="file"
           accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           required
-          className="glass border-white/20"
+         
         />
       </div>
       {state?.error ? <p className="text-sm text-destructive">{state.error}</p> : null}

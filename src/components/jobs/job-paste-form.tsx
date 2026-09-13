@@ -25,7 +25,7 @@ export function JobPasteForm() {
           name="jobUrl"
           type="url"
           placeholder="https://…"
-          className="glass border-white/20"
+         
         />
       </div>
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -38,7 +38,7 @@ export function JobPasteForm() {
           name="jobDescription"
           rows={8}
           placeholder="Paste the full job description here…"
-          className="glass border-white/20"
+         
         />
       </div>
       {state?.error ? <p className="text-sm text-destructive">{state.error}</p> : null}

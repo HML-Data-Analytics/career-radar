@@ -119,12 +119,12 @@ export function EvidenceList({ evidence }: { evidence: Evidence[] }) {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <Label htmlFor="title">Title</Label>
-            <Input id="title" name="title" required className="glass border-white/20" />
+            <Input id="title" name="title" required />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="type">Type</Label>
             <Select name="type" defaultValue="project">
-              <SelectTrigger id="type" className="glass border-white/20">
+              <SelectTrigger id="type">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -138,20 +138,20 @@ export function EvidenceList({ evidence }: { evidence: Evidence[] }) {
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="source">Source</Label>
-            <Input id="source" name="source" placeholder="e.g. performance review, client email" className="glass border-white/20" />
+            <Input id="source" name="source" placeholder="e.g. performance review, client email" />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="evidenceDate">Date</Label>
-            <Input id="evidenceDate" name="evidenceDate" type="date" className="glass border-white/20" />
+            <Input id="evidenceDate" name="evidenceDate" type="date" />
           </div>
           <div className="flex flex-col gap-2 sm:col-span-2">
             <Label htmlFor="relatedSkills">Related skills</Label>
-            <Input id="relatedSkills" name="relatedSkills" placeholder="Comma-separated" className="glass border-white/20" />
+            <Input id="relatedSkills" name="relatedSkills" placeholder="Comma-separated" />
           </div>
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="description">Description</Label>
-          <Textarea id="description" name="description" rows={3} className="glass border-white/20" />
+          <Textarea id="description" name="description" rows={3} />
         </div>
         {state?.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
         <div>

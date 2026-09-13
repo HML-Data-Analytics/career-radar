@@ -61,7 +61,7 @@ export function CareerPreferencesForm({ prefs }: { prefs: PreferencesRow }) {
         <div className="flex flex-col gap-2">
           <Label htmlFor="remotePreference">Remote preference</Label>
           <Select name="remotePreference" defaultValue={prefs?.remote_preference ?? undefined}>
-            <SelectTrigger id="remotePreference" className="glass border-white/20">
+            <SelectTrigger id="remotePreference">
               <SelectValue placeholder="No preference" />
             </SelectTrigger>
             <SelectContent>
@@ -105,7 +105,7 @@ export function CareerPreferencesForm({ prefs }: { prefs: PreferencesRow }) {
           name="careerDirection"
           rows={3}
           defaultValue={prefs?.career_direction ?? ""}
-          className="glass border-white/20"
+         
         />
       </div>
 
@@ -154,7 +154,7 @@ function Field({
         type={type}
         defaultValue={defaultValue}
         placeholder={placeholder}
-        className="glass border-white/20"
+       
       />
     </div>
   );
@@ -179,7 +179,7 @@ function ListField({
         name={name}
         defaultValue={defaultValue}
         placeholder={placeholder ?? "Comma-separated"}
-        className="glass border-white/20"
+       
       />
     </div>
   );

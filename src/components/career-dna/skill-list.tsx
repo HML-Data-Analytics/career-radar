@@ -177,7 +177,7 @@ export function SkillList({ skills }: { skills: Skill[] }) {
       <form action={formAction} className="glass flex flex-col gap-4 rounded-xl p-4 sm:flex-row sm:items-end sm:flex-wrap">
         <div className="flex flex-col gap-2">
           <Label htmlFor="skill">Skill</Label>
-          <Input id="skill" name="skill" required className="glass border-white/20" />
+          <Input id="skill" name="skill" required />
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="category">Category</Label>

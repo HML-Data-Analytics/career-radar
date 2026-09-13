@@ -47,7 +47,7 @@ export function AuthForm({
               type="email"
               autoComplete="email"
               required
-              className="glass border-white/20"
+             
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -59,7 +59,7 @@ export function AuthForm({
               autoComplete={isLogin ? "current-password" : "new-password"}
               required
               minLength={8}
-              className="glass border-white/20"
+             
             />
           </div>
           {state?.error ? (

@@ -42,7 +42,7 @@ export function TailorResumePanel({
       <div className="flex flex-col gap-2">
         <label className="text-xs font-medium text-muted-foreground">Master resume</label>
         <Select value={resumeId} onValueChange={(v) => setResumeId(v ?? "")}>
-          <SelectTrigger className="glass border-white/20">
+          <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -58,7 +58,7 @@ export function TailorResumePanel({
       <div className="flex flex-col gap-2">
         <label className="text-xs font-medium text-muted-foreground">Tailoring intensity</label>
         <Select value={intensity} onValueChange={(v) => setIntensity(v as TailoringIntensity)}>
-          <SelectTrigger className="glass border-white/20">
+          <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
