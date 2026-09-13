@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { CareerPreferencesForm } from "@/components/career-preferences-form";
+import { PreferencesChecklist } from "@/components/preferences/preferences-checklist";
+import { PreferenceSuggestionsPanel } from "@/components/preferences/preference-suggestions-panel";
 
 export default async function PreferencesPage() {
   const supabase = await createClient();
@@ -22,6 +24,8 @@ export default async function PreferencesPage() {
           These drive matching, filtering, and the &quot;Should I Apply?&quot; recommendation. Nothing here is hard-coded - it&apos;s all yours to configure.
         </p>
       </div>
+      <PreferencesChecklist prefs={prefs ?? null} />
+      <PreferenceSuggestionsPanel />
       <CareerPreferencesForm prefs={prefs ?? null} />
     </div>
   );

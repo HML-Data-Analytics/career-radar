@@ -16,6 +16,7 @@ import { ConfirmDeleteDialog } from "@/components/confirm-delete-dialog";
 import type { ResumeQualityScore } from "@/lib/validations/resumeQuality";
 import type { ParsedResume } from "@/lib/validations/resumeParse";
 import { Sparkles, Import, Trash2, Star } from "lucide-react";
+import Link from "next/link";
 
 type Resume = {
   id: string;
@@ -44,6 +45,7 @@ export function ResumeCard({ resume }: { resume: Resume }) {
   const [notice, setNotice] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [importedOk, setImportedOk] = useState(false);
 
   const hasParsedContent =
     !!resume.parsed_content &&
@@ -85,6 +87,7 @@ export function ResumeCard({ resume }: { resume: Resume }) {
           .filter(([, n]) => n > 0)
           .map(([k, n]) => `${n} ${k}`)
           .join(", ");
+        setImportedOk(true);
         setNotice(counts ? `Imported: ${counts}.` : null);
       }
       setPendingAction(null);
@@ -218,6 +221,15 @@ export function ResumeCard({ resume }: { resume: Resume }) {
       </div>
 
       {notice ? <p className="text-sm text-muted-foreground">{notice}</p> : null}
+      {importedOk ? (
+        <p className="text-sm text-muted-foreground">
+          Next:{" "}
+          <Link href="/preferences" className="text-primary underline underline-offset-4">
+            get AI-suggested job preferences
+          </Link>{" "}
+          based on what was just imported.
+        </p>
+      ) : null}
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
     </div>
   );
