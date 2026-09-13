@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Career Radar — AI Career Intelligence",
+  title: "Career Radar - AI Career Intelligence",
   description:
     "Discover the right opportunities, understand your gaps, and apply with a truthful, tailored application package.",
 };

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /**
  * Server-side client for Heineken's internal GenAI Brewery gateway
- * (genai.heineken.com). Internal-network only — calls will time out unless
+ * (genai.heineken.com). Internal-network only - calls will time out unless
  * the server making them is on the HML network or VPN. Never import from
  * client code; GENAI_API_KEY must stay server-side.
  */
@@ -58,7 +58,7 @@ async function callGenAI(input: ResponsesMessage[]): Promise<unknown> {
   } catch (err) {
     if (err instanceof Error && err.name === "AbortError") {
       throw new Error(
-        "GenAI Brewery did not respond in time — check the server is on the HML network or VPN",
+        "GenAI Brewery did not respond in time - check the server is on the HML network or VPN",
       );
     }
     throw err;
@@ -98,7 +98,7 @@ export async function askStructured<T extends z.ZodType>(params: {
 
   const systemPrompt = `${params.systemPrompt}
 
-Respond with ONLY a single JSON object conforming exactly to this JSON Schema — no prose, no markdown code fences, no explanation:
+Respond with ONLY a single JSON object conforming exactly to this JSON Schema - no prose, no markdown code fences, no explanation:
 
 ${JSON.stringify(jsonSchema)}`;
 

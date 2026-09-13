@@ -32,7 +32,7 @@ export default async function DashboardPage() {
         <p className="mt-1 text-muted-foreground">
           {highPriorityCount > 0
             ? `You have ${highPriorityCount} high-priority ${highPriorityCount === 1 ? "opportunity" : "opportunities"} today.`
-            : "No high-priority opportunities yet — paste a job description to get your first match."}
+            : "No high-priority opportunities yet - paste a job description to get your first match."}
           {data.pendingResumeApprovals > 0
             ? ` ${data.pendingResumeApprovals} ${data.pendingResumeApprovals === 1 ? "resume needs" : "resumes need"} approval.`
             : ""}
@@ -80,7 +80,7 @@ export default async function DashboardPage() {
                         </p>
                       </div>
                       <Badge variant={(match.overall_score ?? 0) >= 80 ? "default" : "secondary"}>
-                        {match.overall_score ?? "—"}
+                        {match.overall_score ?? "-"}
                       </Badge>
                     </li>
                   );

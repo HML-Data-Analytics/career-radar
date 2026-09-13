@@ -7,7 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 /**
  * Deletes all of the user's owned records and their auth account. Job
  * postings and company/job intelligence are shared reference data and are
- * intentionally left in place — only this user's link to them is removed.
+ * intentionally left in place - only this user's link to them is removed.
  */
 export async function deleteAccountAction() {
   const supabase = await createClient();

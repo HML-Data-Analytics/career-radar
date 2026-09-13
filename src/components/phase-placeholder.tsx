@@ -21,7 +21,7 @@ export function PhasePlaceholder({
         </div>
         <p className="font-medium">Coming in {phase}</p>
         <p className="max-w-md text-sm text-muted-foreground">
-          This area is part of the Career Radar roadmap but hasn&apos;t been built yet. It will appear here once that phase ships — nothing here is a stand-in for a finished feature.
+          This area is part of the Career Radar roadmap but hasn&apos;t been built yet. It will appear here once that phase ships - nothing here is a stand-in for a finished feature.
         </p>
       </div>
     </div>

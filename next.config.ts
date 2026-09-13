@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /**
    * Vercel's guardrail blocks saving ANY env var named with a NEXT_PUBLIC_
    * prefix (it reads "PUBLIC" in the name itself as a signal a secret is
-   * being exposed, regardless of the value) — this hits every NEXT_PUBLIC_
+   * being exposed, regardless of the value) - this hits every NEXT_PUBLIC_
    * var this app uses, even ones with no secrecy concern at all. Store all
    * of them in Vercel under plain, unprefixed names and re-expose them
    * under the NEXT_PUBLIC_ names the client code expects here.

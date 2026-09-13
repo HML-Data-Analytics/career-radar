@@ -9,7 +9,7 @@
   --color-foreground: var(--foreground);
   /*
    * Apple's system font (SF Pro) can't be legally redistributed via a
-   * public CDN — it requires an Apple Developer license. The authentic
+   * public CDN - it requires an Apple Developer license. The authentic
    * native-feeling choice instead is the system font stack: Safari/macOS/
    * iOS render this literally as SF Pro (it's already on the device),
    * while other platforms fall back to their own native UI font.
@@ -60,7 +60,7 @@
 }
 
 :root {
-  /* iOS system green — used for switches, matching Apple's own apps
+  /* iOS system green - used for switches, matching Apple's own apps
      (Settings, Mail, etc). Same value in light and dark mode, per Apple's
      system color palette. */
   --ios-green: #34c759;
@@ -99,7 +99,7 @@
   --sidebar-ring: oklch(0.72 0.16 280 / 60%);
 
   /*
-   * Liquid Glass tokens — dark mode reads as smoked glass sitting IN
+   * Liquid Glass tokens - dark mode reads as smoked glass sitting IN
    * darkness, not a transparent version of the light recipe: lower
    * saturation boost, a dimmer/narrower specular highlight, and a deeper
    * (but still tight) shadow so panels don't glow against the background.
@@ -226,7 +226,7 @@
    *   2. background is a top-lit gradient (brighter sheen at the top edge,
    *      settling to the base tint), not a flat fill
    *   3. box-shadow stacks a crisp 1px top highlight, a soft inner glow,
-   *      and a very light, tight drop shadow — glass floats, it doesn't sit
+   *      and a very light, tight drop shadow - glass floats, it doesn't sit
    *      in a heavy shadow
    */
   .glass {

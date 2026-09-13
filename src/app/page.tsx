@@ -25,7 +25,7 @@ export default async function Home() {
         </h1>
         <p className="max-w-xl text-muted-foreground text-balance">
           Career Radar builds a truthful picture of your career, scores every
-          opportunity on fit — not just keywords — and helps you apply with a
+          opportunity on fit - not just keywords - and helps you apply with a
           tailored, honest application package.
         </p>
         <div className="mt-4 flex gap-3">
@@ -43,7 +43,7 @@ export default async function Home() {
         <FeatureCard
           icon={Target}
           title="Should I apply?"
-          description="Qualification, career fit, and opportunity quality — scored separately so you never chase the wrong role."
+          description="Qualification, career fit, and opportunity quality - scored separately so you never chase the wrong role."
         />
         <FeatureCard
           icon={FileCheck2}

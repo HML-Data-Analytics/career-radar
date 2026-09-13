@@ -44,7 +44,7 @@ export function ExperienceList({ experiences }: { experiences: Experience[] }) {
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {exp.location ? `${exp.location} · ` : ""}
-                  {exp.start_date ?? "?"} — {exp.is_current ? "Present" : exp.end_date ?? "?"}
+                  {exp.start_date ?? "?"} - {exp.is_current ? "Present" : exp.end_date ?? "?"}
                 </p>
                 {exp.description ? (
                   <p className="mt-2 text-sm text-muted-foreground">{exp.description}</p>

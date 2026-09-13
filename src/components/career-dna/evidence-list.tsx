@@ -56,7 +56,7 @@ export function EvidenceList({ evidence }: { evidence: Evidence[] }) {
       {evidence.length === 0 ? (
         <EmptyState
           title="No evidence yet"
-          description="Add proof of projects, achievements, and results — this keeps every AI-generated claim truthful."
+          description="Add proof of projects, achievements, and results - this keeps every AI-generated claim truthful."
         />
       ) : (
         <ul className="flex flex-col gap-2">

@@ -1,4 +1,4 @@
--- Career Radar — Phase 1 schema
+-- Career Radar - Phase 1 schema
 -- Every user-owned table has user_id referencing auth.users and RLS
 -- restricting access to the owning user. No cross-user reads/writes.
 

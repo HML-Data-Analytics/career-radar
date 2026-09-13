@@ -19,7 +19,7 @@ export default async function OnboardingPage() {
           Let&apos;s build your Career DNA
         </h1>
         <p className="text-muted-foreground">
-          Start with the basics — you can add detailed experience, skills, and evidence afterward.
+          Start with the basics - you can add detailed experience, skills, and evidence afterward.
         </p>
       </div>
       <CareerProfileForm profile={null} />

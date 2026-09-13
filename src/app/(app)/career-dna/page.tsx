@@ -41,7 +41,7 @@ export default async function CareerDnaPage() {
           Career DNA
         </h1>
         <p className="text-muted-foreground">
-          The structured, evidence-backed representation of your career — this is what powers matching, gap analysis, and truthful resume tailoring, not just your resume text.
+          The structured, evidence-backed representation of your career - this is what powers matching, gap analysis, and truthful resume tailoring, not just your resume text.
         </p>
       </div>
 

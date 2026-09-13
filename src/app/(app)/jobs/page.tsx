@@ -30,7 +30,7 @@ export default async function JobsPage() {
       <div>
         <h1 className="font-heading text-2xl font-semibold tracking-tight">Jobs</h1>
         <p className="text-muted-foreground">
-          Add jobs manually for now — pluggable job sources (Greenhouse, Lever, approved APIs) come in a later phase.
+          Add jobs manually for now - pluggable job sources (Greenhouse, Lever, approved APIs) come in a later phase.
         </p>
       </div>
 

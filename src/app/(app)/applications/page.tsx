@@ -19,7 +19,7 @@ export default async function ApplicationsPage() {
       <div>
         <h1 className="font-heading text-2xl font-semibold tracking-tight">Applications</h1>
         <p className="text-muted-foreground">
-          Track every application end to end. Kanban and timeline views, recruiter tracking, and follow-up reminders arrive in a later phase — this list view is fully functional today.
+          Track every application end to end. Kanban and timeline views, recruiter tracking, and follow-up reminders arrive in a later phase - this list view is fully functional today.
         </p>
       </div>
 

@@ -20,7 +20,7 @@ export default async function CareerProfilePage() {
           Career Profile
         </h1>
         <p className="text-muted-foreground">
-          This forms the foundation of your Career DNA — used across matching, gap analysis, and resume tailoring.
+          This forms the foundation of your Career DNA - used across matching, gap analysis, and resume tailoring.
         </p>
       </div>
       <CareerProfileForm profile={profile ?? null} />

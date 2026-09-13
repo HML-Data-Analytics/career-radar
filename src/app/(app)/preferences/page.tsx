@@ -20,7 +20,7 @@ export default async function PreferencesPage() {
           Preferences
         </h1>
         <p className="text-muted-foreground">
-          These drive matching, filtering, and the &quot;Should I Apply?&quot; recommendation. Nothing here is hard-coded — it&apos;s all yours to configure.
+          These drive matching, filtering, and the &quot;Should I Apply?&quot; recommendation. Nothing here is hard-coded - it&apos;s all yours to configure.
         </p>
       </div>
       <CareerPreferencesForm prefs={prefs ?? null} />
