@@ -82,14 +82,20 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.72 0.16 280 / 60%);
 
-  /* Liquid Glass tokens */
-  --glass-bg: oklch(1 0 0 / 10%);
-  --glass-bg-strong: oklch(1 0 0 / 16%);
-  --glass-border: oklch(1 0 0 / 22%);
-  --glass-highlight: oklch(1 0 0 / 55%);
-  --glass-sheen: oklch(1 0 0 / 14%);
-  --glass-shadow: oklch(0.08 0.02 264 / 28%);
-  --glass-blur: 28px;
+  /*
+   * Liquid Glass tokens — dark mode reads as smoked glass sitting IN
+   * darkness, not a transparent version of the light recipe: lower
+   * saturation boost, a dimmer/narrower specular highlight, and a deeper
+   * (but still tight) shadow so panels don't glow against the background.
+   */
+  --glass-bg: oklch(0.32 0.02 264 / 42%);
+  --glass-bg-strong: oklch(0.34 0.02 264 / 55%);
+  --glass-border: oklch(1 0 0 / 14%);
+  --glass-highlight: oklch(1 0 0 / 30%);
+  --glass-sheen: oklch(1 0 0 / 7%);
+  --glass-shadow: oklch(0.04 0.01 264 / 55%);
+  --glass-saturation: 120%;
+  --glass-blur: 24px;
 }
 
 :root:not([data-theme="light"]) {
@@ -125,13 +131,14 @@
     --sidebar-border: oklch(0.2 0.03 264 / 10%);
     --sidebar-ring: oklch(0.55 0.18 280 / 50%);
 
-    --glass-bg: oklch(1 0 0 / 50%);
-    --glass-bg-strong: oklch(1 0 0 / 68%);
-    --glass-border: oklch(1 0 0 / 70%);
-    --glass-highlight: oklch(1 0 0 / 90%);
-    --glass-sheen: oklch(1 0 0 / 45%);
-    --glass-shadow: oklch(0.2 0.03 264 / 12%);
-    --glass-blur: 28px;
+    --glass-bg: oklch(1 0 0 / 48%);
+    --glass-bg-strong: oklch(1 0 0 / 65%);
+    --glass-border: oklch(1 0 0 / 65%);
+    --glass-highlight: oklch(1 0 0 / 95%);
+    --glass-sheen: oklch(1 0 0 / 40%);
+    --glass-shadow: oklch(0.2 0.03 264 / 10%);
+    --glass-saturation: 180%;
+    --glass-blur: 24px;
   }
 }
 
@@ -163,13 +170,14 @@
   --sidebar-border: oklch(0.2 0.03 264 / 10%);
   --sidebar-ring: oklch(0.55 0.18 280 / 50%);
 
-  --glass-bg: oklch(1 0 0 / 50%);
-  --glass-bg-strong: oklch(1 0 0 / 68%);
-  --glass-border: oklch(1 0 0 / 70%);
-  --glass-highlight: oklch(1 0 0 / 90%);
-  --glass-sheen: oklch(1 0 0 / 45%);
-  --glass-shadow: oklch(0.2 0.03 264 / 12%);
-  --glass-blur: 28px;
+  --glass-bg: oklch(1 0 0 / 48%);
+  --glass-bg-strong: oklch(1 0 0 / 65%);
+  --glass-border: oklch(1 0 0 / 65%);
+  --glass-highlight: oklch(1 0 0 / 95%);
+  --glass-sheen: oklch(1 0 0 / 40%);
+  --glass-shadow: oklch(0.2 0.03 264 / 10%);
+  --glass-saturation: 180%;
+  --glass-blur: 24px;
 }
 
 :root[data-theme="dark"] {
@@ -184,9 +192,9 @@
     @apply bg-background text-foreground;
     min-height: 100dvh;
     background-image:
-      radial-gradient(50% 40% at 15% 0%, oklch(0.55 0.15 280 / 24%) 0%, transparent 65%),
-      radial-gradient(45% 38% at 100% 20%, oklch(0.6 0.12 190 / 20%) 0%, transparent 65%),
-      radial-gradient(55% 50% at 40% 100%, oklch(0.5 0.13 320 / 14%) 0%, transparent 70%);
+      radial-gradient(50% 40% at 15% 0%, oklch(0.55 0.1 280 / 16%) 0%, transparent 65%),
+      radial-gradient(45% 38% at 100% 20%, oklch(0.6 0.08 190 / 14%) 0%, transparent 65%),
+      radial-gradient(55% 50% at 40% 100%, oklch(0.5 0.09 320 / 10%) 0%, transparent 70%);
     background-attachment: fixed;
   }
   html {
@@ -208,8 +216,8 @@
   .glass {
     background: linear-gradient(180deg, var(--glass-sheen), var(--glass-bg) 40%);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
     box-shadow:
       inset 0 1px 0 var(--glass-highlight),
       inset 0 0 0 1px oklch(1 0 0 / 4%),
@@ -221,8 +229,8 @@
   .glass-strong {
     background: linear-gradient(180deg, var(--glass-sheen), var(--glass-bg-strong) 45%);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur)) saturate(150%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
     box-shadow:
       inset 0 1px 0 var(--glass-highlight),
       inset 0 0 0 1px oklch(1 0 0 / 6%),
@@ -234,13 +242,30 @@
   .glass-panel {
     background: linear-gradient(180deg, var(--glass-sheen), var(--glass-bg) 40%);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
     box-shadow:
       inset 0 1px 0 var(--glass-highlight),
       inset 0 0 0 1px oklch(1 0 0 / 4%),
       0 1px 2px var(--glass-shadow),
       0 8px 24px -8px var(--glass-shadow);
     border-radius: var(--radius-2xl);
+  }
+
+  /*
+   * Concentric nesting: an element inside a glass container whose corner
+   * radius should always equal the container's radius minus the gap
+   * between them, so corners stay perfectly parallel (Apple's "concentricity"
+   * rule for nested Liquid Glass / control shapes). Usage:
+   *   <div class="glass-panel p-2">
+   *     <button class="glass-nested" style="--nest-gap: 0.5rem">…</button>
+   *   </div>
+   * with the parent's radius read from --radius-2xl (or set --nest-parent-radius
+   * explicitly if the parent uses a different radius token).
+   */
+  .glass-nested {
+    --nest-gap: 0.5rem;
+    --nest-parent-radius: var(--radius-2xl);
+    border-radius: calc(var(--nest-parent-radius) - var(--nest-gap));
   }
 }
