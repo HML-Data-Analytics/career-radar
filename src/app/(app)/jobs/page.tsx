@@ -9,30 +9,49 @@ export default async function JobsPage() {
   const supabase = await createClient();
   const user = await getCurrentUser();
 
-  const [{ data: savedJobsRaw }, { data: matches }, { data: prefs }, { data: recentJobsRaw }] =
-    await Promise.all([
-      supabase
-        .from("saved_jobs")
-        .select("id, created_at, jobs(id, title, company, location, seniority, industry, remote_type)")
-        .eq("user_id", user!.id)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("job_matches")
-        .select("job_id, overall_score, recommendation")
-        .eq("user_id", user!.id),
-      supabase
-        .from("career_preferences")
-        .select("target_roles, target_titles, locations, seniority, industries, remote_preference")
-        .eq("user_id", user!.id)
-        .maybeSingle(),
-      supabase
-        .from("jobs")
-        .select(
-          "id, title, company, location, seniority, industry, remote_type, job_url, job_sources(name)",
-        )
-        .order("discovered_date", { ascending: false })
-        .limit(100),
-    ]);
+  const [
+    { data: savedJobsRaw },
+    { data: matches },
+    { data: prefs },
+    { data: recentJobsRaw },
+    { data: latestJobRaw },
+  ] = await Promise.all([
+    supabase
+      .from("saved_jobs")
+      .select("id, created_at, jobs(id, title, company, location, seniority, industry, remote_type)")
+      .eq("user_id", user!.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("job_matches")
+      .select("job_id, overall_score, recommendation")
+      .eq("user_id", user!.id),
+    supabase
+      .from("career_preferences")
+      .select("target_roles, target_titles, locations, seniority, industries, remote_preference")
+      .eq("user_id", user!.id)
+      .maybeSingle(),
+    supabase
+      .from("jobs")
+      .select(
+        "id, title, company, location, seniority, industry, remote_type, job_url, job_sources(name)",
+      )
+      .order("discovered_date", { ascending: false })
+      .limit(100),
+    supabase
+      .from("jobs")
+      .select("discovered_date")
+      .order("discovered_date", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+
+  const lastRefreshed = latestJobRaw?.discovered_date
+    ? new Date(latestJobRaw.discovered_date).toLocaleString("en-US", {
+        timeZone: "Asia/Yangon",
+        dateStyle: "medium",
+        timeStyle: "short",
+      })
+    : null;
 
   const savedJobs = (savedJobsRaw ?? [])
     .map((saved) => {
@@ -78,6 +97,11 @@ export default async function JobsPage() {
         <p className="text-muted-foreground">
           Listings refresh automatically once a day from approved sources and are matched against your preferences. LinkedIn is not a source here - see the README for why.
         </p>
+        {lastRefreshed ? (
+          <p className="mt-1 text-xs text-muted-foreground">
+            Last refreshed {lastRefreshed} (Myanmar Time)
+          </p>
+        ) : null}
       </div>
 
       <div className="flex flex-col gap-3">
