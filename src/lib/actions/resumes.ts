@@ -208,7 +208,9 @@ export async function importParsedResumeAction(resumeId: string) {
     (e): e is typeof e & { institution: string } => !!e.institution,
   );
 
-  await supabase.from("career_profiles").upsert(
+  const errors: string[] = [];
+
+  const { error: profileError } = await supabase.from("career_profiles").upsert(
     {
       user_id: user.id,
       headline: parsed.headline ?? undefined,
@@ -220,9 +222,10 @@ export async function importParsedResumeAction(resumeId: string) {
     },
     { onConflict: "user_id" },
   );
+  if (profileError) errors.push(`Career profile: ${profileError.message}`);
 
   if (experiences.length > 0) {
-    await supabase.from("career_experiences").insert(
+    const { error } = await supabase.from("career_experiences").insert(
       experiences.map((exp) => ({
         user_id: user.id,
         company: exp.company,
@@ -236,20 +239,22 @@ export async function importParsedResumeAction(resumeId: string) {
         achievements: exp.achievements,
       })),
     );
+    if (error) errors.push(`Experience: ${error.message}`);
   }
 
   if (skills.length > 0) {
-    await supabase.from("career_skills").insert(
+    const { error } = await supabase.from("career_skills").insert(
       skills.map((s) => ({
         user_id: user.id,
         skill: s.skill,
         category: s.category,
       })),
     );
+    if (error) errors.push(`Skills: ${error.message}`);
   }
 
   if (certifications.length > 0) {
-    await supabase.from("career_certifications").insert(
+    const { error } = await supabase.from("career_certifications").insert(
       certifications.map((c) => ({
         user_id: user.id,
         name: c.name,
@@ -257,10 +262,11 @@ export async function importParsedResumeAction(resumeId: string) {
         issue_date: c.issueDate,
       })),
     );
+    if (error) errors.push(`Certifications: ${error.message}`);
   }
 
   if (education.length > 0) {
-    await supabase.from("career_education").insert(
+    const { error } = await supabase.from("career_education").insert(
       education.map((e) => ({
         user_id: user.id,
         institution: e.institution,
@@ -270,11 +276,29 @@ export async function importParsedResumeAction(resumeId: string) {
         end_date: e.endDate,
       })),
     );
+    if (error) errors.push(`Education: ${error.message}`);
   }
 
   revalidatePath("/career-dna");
   revalidatePath("/career-profile");
   revalidatePath("/resumes");
+
+  if (errors.length > 0) {
+    return { error: errors.join(" | ") };
+  }
+
+  if (
+    experiences.length === 0 &&
+    skills.length === 0 &&
+    certifications.length === 0 &&
+    education.length === 0
+  ) {
+    return {
+      error:
+        "The parsed resume had no usable experience, skills, certifications, or education to import.",
+    };
+  }
+
   return { success: true };
 }
 
