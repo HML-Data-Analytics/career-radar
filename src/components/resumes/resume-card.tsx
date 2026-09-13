@@ -36,6 +36,7 @@ const QUALITY_LABELS: { key: keyof ResumeQualityScore; label: string }[] = [
 export function ResumeCard({ resume }: { resume: Resume }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
 
   const hasParsedContent =
@@ -43,12 +44,29 @@ export function ResumeCard({ resume }: { resume: Resume }) {
     Object.keys(resume.parsed_content).some((k) => k !== "qualityScore");
   const quality = resume.parsed_content?.qualityScore;
 
-  function run(action: string, fn: () => Promise<{ error?: string } | void>) {
+  function run(
+    action: string,
+    fn: () => Promise<
+      | { error?: string; warning?: string; imported?: Record<string, number> }
+      | void
+    >,
+  ) {
     setError(null);
+    setNotice(null);
     setPendingAction(action);
     startTransition(async () => {
       const result = await fn();
-      if (result && "error" in result && result.error) setError(result.error);
+      if (result && "error" in result && result.error) {
+        setError(result.error);
+      } else if (result && "warning" in result && result.warning) {
+        setNotice(result.warning);
+      } else if (action === "import" && result && "imported" in result && result.imported) {
+        const counts = Object.entries(result.imported)
+          .filter(([, n]) => n > 0)
+          .map(([k, n]) => `${n} ${k}`)
+          .join(", ");
+        setNotice(counts ? `Imported: ${counts}.` : null);
+      }
       setPendingAction(null);
     });
   }
@@ -145,6 +163,7 @@ export function ResumeCard({ resume }: { resume: Resume }) {
             size="sm"
             className="glass gap-1.5 border-white/20"
             disabled={isPending}
+            title="Imports experience, skills, certifications, and education. Evidence is added separately on the Career DNA page."
             onClick={() =>
               run("import", () => importParsedResumeAction(resume.id))
             }
@@ -168,6 +187,7 @@ export function ResumeCard({ resume }: { resume: Resume }) {
         </Button>
       </div>
 
+      {notice ? <p className="text-sm text-muted-foreground">{notice}</p> : null}
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
     </div>
   );

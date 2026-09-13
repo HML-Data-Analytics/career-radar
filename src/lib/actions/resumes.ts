@@ -299,7 +299,34 @@ export async function importParsedResumeAction(resumeId: string) {
     };
   }
 
-  return { success: true };
+  const skippedExperiences = parsed.experiences.length - experiences.length;
+  const skippedSkills = parsed.skills.length - skills.length;
+  const skippedCertifications = parsed.certifications.length - certifications.length;
+  const skippedEducation = parsed.education.length - education.length;
+  const totalSkipped =
+    skippedExperiences + skippedSkills + skippedCertifications + skippedEducation;
+
+  const imported = {
+    experiences: experiences.length,
+    skills: skills.length,
+    certifications: certifications.length,
+    education: education.length,
+  };
+
+  if (totalSkipped > 0) {
+    const parts: string[] = [];
+    if (skippedExperiences > 0) parts.push(`${skippedExperiences} experience entr${skippedExperiences === 1 ? "y" : "ies"}`);
+    if (skippedSkills > 0) parts.push(`${skippedSkills} skill${skippedSkills === 1 ? "" : "s"}`);
+    if (skippedCertifications > 0) parts.push(`${skippedCertifications} certification${skippedCertifications === 1 ? "" : "s"}`);
+    if (skippedEducation > 0) parts.push(`${skippedEducation} education entr${skippedEducation === 1 ? "y" : "ies"}`);
+    return {
+      success: true,
+      imported,
+      warning: `Imported everything else, but couldn't identify a clear name for: ${parts.join(", ")}. Add ${totalSkipped === 1 ? "it" : "them"} manually, or edit the resume text and re-parse.`,
+    };
+  }
+
+  return { success: true, imported };
 }
 
 export async function analyzeResumeQualityAction(resumeId: string) {
