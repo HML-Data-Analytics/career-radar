@@ -20,7 +20,7 @@ export default async function JobsPage() {
       .eq("user_id", user!.id),
     supabase
       .from("career_preferences")
-      .select("locations, seniority, industries, remote_preference")
+      .select("target_roles, target_titles, locations, seniority, industries, remote_preference")
       .eq("user_id", user!.id)
       .maybeSingle(),
   ]);
@@ -44,6 +44,14 @@ export default async function JobsPage() {
       prefs.remote_preference)
   );
 
+  // Auto-discovery needs a query to search with - that's target
+  // roles/titles specifically (see discoverJobsAction), not any preference.
+  const canAutoDiscover = !!(
+    prefs &&
+    ((prefs.target_roles && prefs.target_roles.length > 0) ||
+      (prefs.target_titles && prefs.target_titles.length > 0))
+  );
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -53,7 +61,7 @@ export default async function JobsPage() {
         </p>
       </div>
 
-      <DiscoverJobsPanel />
+      <DiscoverJobsPanel canAutoDiscover={canAutoDiscover} />
 
       <JobPasteForm />
 

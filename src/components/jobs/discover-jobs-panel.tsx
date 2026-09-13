@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,26 +10,77 @@ import {
 } from "@/lib/actions/discoverJobs";
 import { Search, Plus, Check, ExternalLink } from "lucide-react";
 
-export function DiscoverJobsPanel() {
+const AUTO_SEARCH_CACHE_KEY = "career-radar:auto-discover-cache";
+// Remotive's own terms ask for at most ~4 requests/day site-wide, so
+// auto-running this on every Jobs page visit needs a floor - cached
+// results are reused within this window instead of re-searching.
+const AUTO_SEARCH_MIN_INTERVAL_MS = 15 * 60 * 1000;
+
+type CachedSearch = { results: DiscoverJobsResult[]; timestamp: number };
+
+function readCache(): CachedSearch | null {
+  try {
+    const raw = localStorage.getItem(AUTO_SEARCH_CACHE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as CachedSearch;
+  } catch {
+    return null;
+  }
+}
+
+function writeCache(results: DiscoverJobsResult[]) {
+  try {
+    localStorage.setItem(
+      AUTO_SEARCH_CACHE_KEY,
+      JSON.stringify({ results, timestamp: Date.now() }),
+    );
+  } catch {
+    // localStorage unavailable (private mode, etc.) - just skip caching.
+  }
+}
+
+export function DiscoverJobsPanel({
+  canAutoDiscover,
+}: {
+  canAutoDiscover: boolean;
+}) {
   const [query, setQuery] = useState("");
   const [isPending, startTransition] = useTransition();
-  const [results, setResults] = useState<DiscoverJobsResult[] | null>(null);
+  const [results, setResults] = useState<DiscoverJobsResult[] | null>(() => {
+    if (!canAutoDiscover || typeof window === "undefined") return null;
+    const cached = readCache();
+    if (cached && Date.now() - cached.timestamp < AUTO_SEARCH_MIN_INTERVAL_MS) {
+      return cached.results;
+    }
+    return null;
+  });
   const [error, setError] = useState<string | null>(null);
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
   const [addingId, setAddingId] = useState<string | null>(null);
+  const [autoSearched, setAutoSearched] = useState(() => results !== null);
+  const hasAutoRun = useRef(results !== null);
 
-  function runSearch() {
+  function runSearch(searchQuery?: string) {
     setError(null);
     startTransition(async () => {
-      const result = await discoverJobsAction(query);
+      const result = await discoverJobsAction(searchQuery ?? query);
       if ("error" in result) {
         setError(result.error);
         setResults(null);
       } else {
         setResults(result.results);
+        writeCache(result.results);
       }
     });
   }
+
+  useEffect(() => {
+    if (!canAutoDiscover || hasAutoRun.current) return;
+    hasAutoRun.current = true;
+    setAutoSearched(true);
+    runSearch("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canAutoDiscover]);
 
   return (
     <div className="glass-panel flex flex-col gap-4 p-5">
@@ -47,7 +98,7 @@ export function DiscoverJobsPanel() {
           placeholder="e.g. Product Manager"
           className="glass border-white/20"
         />
-        <Button onClick={runSearch} disabled={isPending} className="shrink-0 gap-2">
+        <Button onClick={() => runSearch()} disabled={isPending} className="shrink-0 gap-2">
           <Search className="size-4" />
           {isPending ? "Searching..." : "Search"}
         </Button>
@@ -56,6 +107,22 @@ export function DiscoverJobsPanel() {
 
       {results ? (
         <div className="flex flex-col gap-4">
+          {autoSearched && !query ? (
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">
+                Auto-searched using your saved target roles/titles.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-auto gap-1 p-0 text-xs text-muted-foreground hover:text-foreground"
+                disabled={isPending}
+                onClick={() => runSearch("")}
+              >
+                Refresh
+              </Button>
+            </div>
+          ) : null}
           {results.map((source) => (
             <div key={source.sourceId} className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
