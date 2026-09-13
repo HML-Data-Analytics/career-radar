@@ -51,7 +51,7 @@ export function ExperienceList({ experiences }: { experiences: Experience[] }) {
                 ) : null}
               </div>
               <form action={deleteExperienceAction.bind(null, exp.id)}>
-                <Button type="submit" variant="ghost" size="icon-sm">
+                <Button type="submit" variant="ghost" size="icon">
                   <Trash2 className="size-4" />
                 </Button>
               </form>

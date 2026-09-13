@@ -72,7 +72,7 @@ export function ResumeCard({ resume }: { resume: Resume }) {
         </div>
         <Button
           variant="ghost"
-          size="icon-sm"
+          size="icon"
           disabled={isPending}
           onClick={() => run("delete", () => deleteResumeAction(resume.id))}
         >

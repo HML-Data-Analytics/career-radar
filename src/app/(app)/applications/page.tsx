@@ -1,12 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { EmptyState } from "@/components/empty-state";
 import { ApplicationStatusSelect } from "@/components/applications/status-select";
 
 export default async function ApplicationsPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   const { data: applications } = await supabase
     .from("applications")
@@ -36,9 +35,9 @@ export default async function ApplicationsPage() {
             const job = Array.isArray(app.jobs) ? app.jobs[0] : app.jobs;
             return (
               <li key={app.id} className="glass flex flex-wrap items-center justify-between gap-3 rounded-xl p-4">
-                <div>
-                  <p className="font-medium">{job?.title}</p>
-                  <p className="text-sm text-muted-foreground">{job?.company}</p>
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{job?.title}</p>
+                  <p className="truncate text-sm text-muted-foreground">{job?.company}</p>
                 </div>
                 <ApplicationStatusSelect applicationId={app.id} status={app.status} />
               </li>

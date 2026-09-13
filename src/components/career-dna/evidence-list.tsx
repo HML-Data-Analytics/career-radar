@@ -97,7 +97,7 @@ export function EvidenceList({ evidence }: { evidence: Evidence[] }) {
                   </Button>
                 </form>
                 <form action={deleteEvidenceAction.bind(null, item.id)}>
-                  <Button type="submit" variant="ghost" size="icon-sm">
+                  <Button type="submit" variant="ghost" size="icon">
                     <Trash2 className="size-4" />
                   </Button>
                 </form>

@@ -50,8 +50,8 @@ export function ApplicationStatusSelect({
         })
       }
     >
-      <SelectTrigger className="glass w-44 border-white/20">
-        <SelectValue />
+      <SelectTrigger className="glass w-full border-white/20 sm:w-44">
+        <SelectValue className="truncate" />
       </SelectTrigger>
       <SelectContent>
         {STATUSES.map((s) => (

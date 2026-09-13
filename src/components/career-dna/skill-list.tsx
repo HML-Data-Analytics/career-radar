@@ -42,7 +42,11 @@ export function SkillList({ skills }: { skills: Skill[] }) {
                   <span className="text-muted-foreground">· {skill.proficiency}</span>
                 ) : null}
                 <form action={deleteSkillAction.bind(null, skill.id)}>
-                  <button type="submit" aria-label={`Remove ${skill.skill}`}>
+                  <button
+                    type="submit"
+                    aria-label={`Remove ${skill.skill}`}
+                    className="-m-2 p-2"
+                  >
                     <Trash2 className="size-3.5 text-muted-foreground hover:text-destructive" />
                   </button>
                 </form>
