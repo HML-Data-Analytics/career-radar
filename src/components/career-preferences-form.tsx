@@ -105,7 +105,6 @@ export function CareerPreferencesForm({ prefs }: { prefs: PreferencesRow }) {
           name="careerDirection"
           rows={3}
           defaultValue={prefs?.career_direction ?? ""}
-         
         />
       </div>
 
@@ -154,7 +153,6 @@ function Field({
         type={type}
         defaultValue={defaultValue}
         placeholder={placeholder}
-       
       />
     </div>
   );
@@ -179,7 +177,6 @@ function ListField({
         name={name}
         defaultValue={defaultValue}
         placeholder={placeholder ?? "Comma-separated"}
-       
       />
     </div>
   );

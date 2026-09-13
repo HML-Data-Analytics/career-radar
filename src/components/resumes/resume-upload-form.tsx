@@ -29,7 +29,6 @@ export function ResumeUploadForm() {
           type="file"
           accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           required
-         
         />
       </div>
       {state?.error ? <p className="text-sm text-destructive">{state.error}</p> : null}

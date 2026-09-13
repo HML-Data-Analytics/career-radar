@@ -65,7 +65,6 @@ export function CareerProfileForm({ profile }: { profile: CareerProfileRow }) {
           name="professionalSummary"
           rows={4}
           defaultValue={profile?.professional_summary ?? ""}
-         
         />
       </div>
 
@@ -77,7 +76,6 @@ export function CareerProfileForm({ profile }: { profile: CareerProfileRow }) {
           rows={3}
           placeholder="Where do you want your career to go next?"
           defaultValue={profile?.career_direction ?? ""}
-         
         />
       </div>
 
@@ -89,7 +87,6 @@ export function CareerProfileForm({ profile }: { profile: CareerProfileRow }) {
           rows={3}
           placeholder="What does long-term success look like for you?"
           defaultValue={profile?.career_ambition ?? ""}
-         
         />
       </div>
 
@@ -131,7 +128,6 @@ function Field({
         type={type}
         defaultValue={defaultValue}
         placeholder={placeholder}
-       
       />
     </div>
   );
