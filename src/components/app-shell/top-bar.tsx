@@ -22,7 +22,7 @@ export function TopBar({
   const initials = (firstName?.[0] ?? email[0] ?? "?").toUpperCase();
 
   return (
-    <header className="glass-strong sticky top-3 z-10 flex items-center justify-between gap-2 rounded-2xl px-3 py-2.5 sm:top-4 sm:gap-4 sm:px-4 sm:py-3">
+    <header className="flex items-center justify-between gap-2 px-1 py-1 sm:gap-4 sm:px-0">
       <div className="min-w-0">
         <p className="truncate text-sm text-muted-foreground">
           {firstName ? `Welcome back, ${firstName}` : "Welcome back"}
