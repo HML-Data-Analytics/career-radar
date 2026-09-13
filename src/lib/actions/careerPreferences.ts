@@ -87,3 +87,20 @@ export async function upsertCareerPreferencesAction(
   revalidatePath("/preferences");
   return { success: true };
 }
+
+export async function clearCareerPreferencesAction() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const { error } = await supabase
+    .from("career_preferences")
+    .delete()
+    .eq("user_id", user.id);
+  if (error) return { error: error.message };
+
+  revalidatePath("/preferences");
+  return { success: true };
+}
