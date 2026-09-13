@@ -1,6 +1,6 @@
-import { Radar } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { AuthHero } from "@/components/auth-hero";
+import { AuthIllustration } from "@/components/auth-illustration";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,10 +13,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <AuthHero />
       </div>
 
-      <div className="flex w-full flex-1 flex-col items-center justify-center gap-6 px-4 py-12 lg:w-1/2 lg:flex-none">
-        <div className="glass flex size-10 shrink-0 items-center justify-center rounded-2xl text-primary lg:hidden">
-          <Radar className="size-5" />
-        </div>
+      <div className="flex w-full flex-1 flex-col items-center justify-center gap-4 px-4 py-10 lg:w-1/2 lg:flex-none">
+        <AuthIllustration className="w-full max-w-[220px] lg:hidden" />
         {children}
       </div>
     </div>

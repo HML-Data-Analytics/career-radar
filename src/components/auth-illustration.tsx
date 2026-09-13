@@ -1,10 +1,10 @@
-export function AuthIllustration() {
+export function AuthIllustration({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 400 320"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="w-full max-w-sm"
+      className={className ?? "w-full max-w-sm"}
       role="img"
       aria-label="Illustration of a person working on a laptop with a radar chart display"
     >
