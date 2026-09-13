@@ -59,10 +59,64 @@
   --color-ios-green: var(--ios-green);
 }
 
+/*
+ * Light is the default look regardless of OS preference - data-theme is
+ * only ever set explicitly (by the theme toggle, including its "System"
+ * option reading matchMedia in JS), never inferred from
+ * prefers-color-scheme. That keeps a first-time visit's look predictable
+ * instead of silently flipping to dark for anyone with a dark OS theme.
+ */
 :root {
-  /* iOS system colors - same values Apple's own apps use (Settings, Mail,
-     etc). systemBlue is the default iOS tint/accent; systemGreen is used
-     for switches. Dark-mode variants per Apple's dynamic color values. */
+  --ios-blue: #007aff;
+  --ios-green: #34c759;
+  --ios-indigo: #6155f5;
+
+  --background: oklch(0.93 0.02 250);
+  --foreground: oklch(0.2 0.03 264);
+  --card: oklch(1 0 0 / 55%);
+  --card-foreground: oklch(0.2 0.03 264);
+  --popover: oklch(1 0 0 / 90%);
+  --popover-foreground: oklch(0.2 0.03 264);
+  --primary: var(--ios-blue);
+  --primary-foreground: oklch(0.98 0.01 264);
+  --secondary: oklch(1 0 0 / 45%);
+  --secondary-foreground: oklch(0.25 0.03 264);
+  --muted: oklch(1 0 0 / 40%);
+  --muted-foreground: oklch(0.42 0.02 264);
+  --accent: var(--ios-indigo);
+  --accent-foreground: oklch(0.98 0.01 264);
+  --destructive: #ff383c;
+  --border: oklch(0.2 0.03 264 / 12%);
+  --input: oklch(0.2 0.03 264 / 10%);
+  --ring: oklch(0.55 0.2 258 / 50%);
+  --chart-1: var(--ios-blue);
+  --chart-2: var(--ios-indigo);
+  --chart-3: #ffd600;
+  --chart-4: #ff9230;
+  --chart-5: #00d2e0;
+  --radius: 1rem;
+  --sidebar: oklch(1 0 0 / 35%);
+  --sidebar-foreground: oklch(0.2 0.03 264);
+  --sidebar-primary: var(--ios-blue);
+  --sidebar-primary-foreground: oklch(0.98 0.01 264);
+  --sidebar-accent: oklch(1 0 0 / 45%);
+  --sidebar-accent-foreground: oklch(0.2 0.03 264);
+  --sidebar-border: oklch(0.2 0.03 264 / 10%);
+  --sidebar-ring: oklch(0.55 0.2 258 / 50%);
+
+  --glass-bg: oklch(1 0 0 / 48%);
+  --glass-bg-strong: oklch(1 0 0 / 65%);
+  --glass-border: oklch(1 0 0 / 65%);
+  --glass-highlight: oklch(1 0 0 / 95%);
+  --glass-sheen: oklch(1 0 0 / 40%);
+  --glass-shadow: oklch(0.2 0.03 264 / 10%);
+  --glass-saturation: 180%;
+  --glass-blur: 24px;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
   --ios-blue: #0a84ff;
   --ios-green: #30d158;
   --ios-indigo: #6d7cff;
@@ -90,7 +144,6 @@
   --chart-3: #ffd600;
   --chart-4: #ff9230;
   --chart-5: #00d2e0;
-  --radius: 1rem;
   --sidebar: oklch(1 0 0 / 5%);
   --sidebar-foreground: oklch(0.98 0.01 264);
   --sidebar-primary: var(--ios-blue);
@@ -114,98 +167,6 @@
   --glass-shadow: oklch(0.04 0.01 264 / 55%);
   --glass-saturation: 120%;
   --glass-blur: 24px;
-}
-
-:root:not([data-theme="light"]) {
-  color-scheme: dark;
-}
-
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --background: oklch(0.93 0.02 250);
-    --foreground: oklch(0.2 0.03 264);
-    --card: oklch(1 0 0 / 55%);
-    --card-foreground: oklch(0.2 0.03 264);
-    --popover: oklch(1 0 0 / 90%);
-    --popover-foreground: oklch(0.2 0.03 264);
-    --ios-blue: #007aff;
-    --ios-green: #34c759;
-    --ios-indigo: #6155f5;
-    --primary: var(--ios-blue);
-    --primary-foreground: oklch(0.98 0.01 264);
-    --secondary: oklch(1 0 0 / 45%);
-    --secondary-foreground: oklch(0.25 0.03 264);
-    --muted: oklch(1 0 0 / 40%);
-    --muted-foreground: oklch(0.42 0.02 264);
-    --accent: var(--ios-indigo);
-    --accent-foreground: oklch(0.98 0.01 264);
-    --destructive: #ff383c;
-    --border: oklch(0.2 0.03 264 / 12%);
-    --input: oklch(0.2 0.03 264 / 10%);
-    --ring: oklch(0.55 0.2 258 / 50%);
-    --sidebar: oklch(1 0 0 / 35%);
-    --sidebar-foreground: oklch(0.2 0.03 264);
-    --sidebar-primary: var(--ios-blue);
-    --sidebar-primary-foreground: oklch(0.98 0.01 264);
-    --sidebar-accent: oklch(1 0 0 / 45%);
-    --sidebar-accent-foreground: oklch(0.2 0.03 264);
-    --sidebar-border: oklch(0.2 0.03 264 / 10%);
-    --sidebar-ring: oklch(0.55 0.2 258 / 50%);
-
-    --glass-bg: oklch(1 0 0 / 48%);
-    --glass-bg-strong: oklch(1 0 0 / 65%);
-    --glass-border: oklch(1 0 0 / 65%);
-    --glass-highlight: oklch(1 0 0 / 95%);
-    --glass-sheen: oklch(1 0 0 / 40%);
-    --glass-shadow: oklch(0.2 0.03 264 / 10%);
-    --glass-saturation: 180%;
-    --glass-blur: 24px;
-  }
-}
-
-:root[data-theme="light"] {
-  --background: oklch(0.93 0.02 250);
-  --foreground: oklch(0.2 0.03 264);
-  --card: oklch(1 0 0 / 55%);
-  --card-foreground: oklch(0.2 0.03 264);
-  --popover: oklch(1 0 0 / 90%);
-  --popover-foreground: oklch(0.2 0.03 264);
-  --ios-blue: #007aff;
-  --ios-green: #34c759;
-  --ios-indigo: #6155f5;
-  --primary: var(--ios-blue);
-  --primary-foreground: oklch(0.98 0.01 264);
-  --secondary: oklch(1 0 0 / 45%);
-  --secondary-foreground: oklch(0.25 0.03 264);
-  --muted: oklch(1 0 0 / 40%);
-  --muted-foreground: oklch(0.42 0.02 264);
-  --accent: var(--ios-indigo);
-  --accent-foreground: oklch(0.98 0.01 264);
-  --destructive: #ff383c;
-  --border: oklch(0.2 0.03 264 / 12%);
-  --input: oklch(0.2 0.03 264 / 10%);
-  --ring: oklch(0.55 0.2 258 / 50%);
-  --sidebar: oklch(1 0 0 / 35%);
-  --sidebar-foreground: oklch(0.2 0.03 264);
-  --sidebar-primary: var(--ios-blue);
-  --sidebar-primary-foreground: oklch(0.98 0.01 264);
-  --sidebar-accent: oklch(1 0 0 / 45%);
-  --sidebar-accent-foreground: oklch(0.2 0.03 264);
-  --sidebar-border: oklch(0.2 0.03 264 / 10%);
-  --sidebar-ring: oklch(0.55 0.2 258 / 50%);
-
-  --glass-bg: oklch(1 0 0 / 48%);
-  --glass-bg-strong: oklch(1 0 0 / 65%);
-  --glass-border: oklch(1 0 0 / 65%);
-  --glass-highlight: oklch(1 0 0 / 95%);
-  --glass-sheen: oklch(1 0 0 / 40%);
-  --glass-shadow: oklch(0.2 0.03 264 / 10%);
-  --glass-saturation: 180%;
-  --glass-blur: 24px;
-}
-
-:root[data-theme="dark"] {
-  color-scheme: dark;
 }
 
 @layer base {

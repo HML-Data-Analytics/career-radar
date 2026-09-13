@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, useEffect } from "react";
 import { Sun, Moon, MonitorSmartphone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,29 +19,51 @@ function subscribe(callback: () => void) {
   return () => listeners.delete(callback);
 }
 
+/** The user's chosen preference (what the toggle should show as active). */
 function getSnapshot(): ThemePreference {
   const stored = localStorage.getItem("theme");
-  return stored === "light" || stored === "dark" ? stored : "system";
+  return stored === "light" || stored === "dark" || stored === "system"
+    ? stored
+    : "light";
 }
 
 function getServerSnapshot(): ThemePreference {
-  return "system";
+  return "light";
 }
 
-function applyTheme(preference: ThemePreference) {
+function resolveSystemPreference(): "light" | "dark" {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+/** Applies data-theme for the given preference. "system" is resolved once
+ * against the current OS setting - the live-update listener (below) keeps
+ * it in sync if the OS setting changes afterward. */
+function applyResolvedTheme(preference: ThemePreference) {
   const root = document.documentElement;
-  if (preference === "system") {
+  const resolved = preference === "system" ? resolveSystemPreference() : preference;
+  if (resolved === "light") {
     root.removeAttribute("data-theme");
-    localStorage.removeItem("theme");
   } else {
-    root.setAttribute("data-theme", preference);
-    localStorage.setItem("theme", preference);
+    root.setAttribute("data-theme", "dark");
   }
+}
+
+function setPreference(preference: ThemePreference) {
+  localStorage.setItem("theme", preference);
+  applyResolvedTheme(preference);
   listeners.forEach((listener) => listener());
 }
 
 export function ThemeToggle() {
   const preference = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
+  useEffect(() => {
+    if (preference !== "system") return;
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = () => applyResolvedTheme("system");
+    media.addEventListener("change", handleChange);
+    return () => media.removeEventListener("change", handleChange);
+  }, [preference]);
 
   return (
     <div
@@ -60,7 +82,7 @@ export function ThemeToggle() {
             aria-checked={active}
             aria-label={option.label}
             title={option.label}
-            onClick={() => applyTheme(option.value)}
+            onClick={() => setPreference(option.value)}
             className={cn(
               "flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors",
               "hover:text-foreground",
