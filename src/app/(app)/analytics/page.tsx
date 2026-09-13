@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import {
   Card,
   CardContent,
@@ -10,9 +11,7 @@ import { EmptyState } from "@/components/empty-state";
 
 export default async function AnalyticsPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   const { data: applications } = await supabase
     .from("applications")

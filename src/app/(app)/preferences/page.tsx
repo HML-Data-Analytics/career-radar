@@ -1,11 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { CareerPreferencesForm } from "@/components/career-preferences-form";
 
 export default async function PreferencesPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   const { data: prefs } = await supabase
     .from("career_preferences")

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { getDashboardData } from "@/lib/data/dashboard";
 import {
   Card,
@@ -13,10 +13,7 @@ import { SetupChecklist } from "@/components/dashboard/setup-checklist";
 import { Flame, Sparkles, CalendarClock, TriangleAlert } from "lucide-react";
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   const data = await getDashboardData(user!.id);
 

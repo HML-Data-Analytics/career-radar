@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { EmptyState } from "@/components/empty-state";
 import { Badge } from "@/components/ui/badge";
 
 export default async function SavedPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   const { data: savedJobs } = await supabase
     .from("saved_jobs")

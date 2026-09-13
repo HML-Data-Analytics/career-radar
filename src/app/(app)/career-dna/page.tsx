@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import {
   Tabs,
   TabsContent,
@@ -11,9 +12,7 @@ import { EvidenceList } from "@/components/career-dna/evidence-list";
 
 export default async function CareerDnaPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   const [{ data: experiences }, { data: skills }, { data: evidence }] =
     await Promise.all([
