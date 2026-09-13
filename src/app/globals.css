@@ -60,10 +60,12 @@
 }
 
 :root {
-  /* iOS system green - used for switches, matching Apple's own apps
-     (Settings, Mail, etc). Same value in light and dark mode, per Apple's
-     system color palette. */
-  --ios-green: #34c759;
+  /* iOS system colors - same values Apple's own apps use (Settings, Mail,
+     etc). systemBlue is the default iOS tint/accent; systemGreen is used
+     for switches. Dark-mode variants per Apple's dynamic color values. */
+  --ios-blue: #0a84ff;
+  --ios-green: #30d158;
+  --ios-indigo: #6d7cff;
 
   --background: oklch(0.145 0.03 264);
   --foreground: oklch(0.98 0.01 264);
@@ -71,32 +73,32 @@
   --card-foreground: oklch(0.98 0.01 264);
   --popover: oklch(0.2 0.03 264);
   --popover-foreground: oklch(0.98 0.01 264);
-  --primary: oklch(0.72 0.16 280);
-  --primary-foreground: oklch(0.145 0.03 264);
+  --primary: var(--ios-blue);
+  --primary-foreground: oklch(0.98 0.01 264);
   --secondary: oklch(1 0 0 / 8%);
   --secondary-foreground: oklch(0.98 0.01 264);
   --muted: oklch(1 0 0 / 6%);
   --muted-foreground: oklch(0.75 0.02 264);
-  --accent: oklch(0.75 0.14 190);
-  --accent-foreground: oklch(0.145 0.03 264);
-  --destructive: oklch(0.65 0.22 25);
+  --accent: var(--ios-indigo);
+  --accent-foreground: oklch(0.98 0.01 264);
+  --destructive: #ff4245;
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 10%);
-  --ring: oklch(0.72 0.16 280 / 60%);
-  --chart-1: oklch(0.72 0.16 280);
-  --chart-2: oklch(0.75 0.14 190);
-  --chart-3: oklch(0.8 0.16 90);
-  --chart-4: oklch(0.7 0.18 20);
-  --chart-5: oklch(0.65 0.1 320);
+  --ring: oklch(0.62 0.19 258 / 60%);
+  --chart-1: var(--ios-blue);
+  --chart-2: var(--ios-indigo);
+  --chart-3: #ffd600;
+  --chart-4: #ff9230;
+  --chart-5: #00d2e0;
   --radius: 1rem;
   --sidebar: oklch(1 0 0 / 5%);
   --sidebar-foreground: oklch(0.98 0.01 264);
-  --sidebar-primary: oklch(0.72 0.16 280);
-  --sidebar-primary-foreground: oklch(0.145 0.03 264);
+  --sidebar-primary: var(--ios-blue);
+  --sidebar-primary-foreground: oklch(0.98 0.01 264);
   --sidebar-accent: oklch(1 0 0 / 8%);
   --sidebar-accent-foreground: oklch(0.98 0.01 264);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.72 0.16 280 / 60%);
+  --sidebar-ring: oklch(0.62 0.19 258 / 60%);
 
   /*
    * Liquid Glass tokens - dark mode reads as smoked glass sitting IN
@@ -126,26 +128,29 @@
     --card-foreground: oklch(0.2 0.03 264);
     --popover: oklch(1 0 0 / 90%);
     --popover-foreground: oklch(0.2 0.03 264);
-    --primary: oklch(0.55 0.18 280);
+    --ios-blue: #007aff;
+    --ios-green: #34c759;
+    --ios-indigo: #6155f5;
+    --primary: var(--ios-blue);
     --primary-foreground: oklch(0.98 0.01 264);
     --secondary: oklch(1 0 0 / 45%);
     --secondary-foreground: oklch(0.25 0.03 264);
     --muted: oklch(1 0 0 / 40%);
     --muted-foreground: oklch(0.42 0.02 264);
-    --accent: oklch(0.6 0.13 190);
+    --accent: var(--ios-indigo);
     --accent-foreground: oklch(0.98 0.01 264);
-    --destructive: oklch(0.55 0.22 25);
+    --destructive: #ff383c;
     --border: oklch(0.2 0.03 264 / 12%);
     --input: oklch(0.2 0.03 264 / 10%);
-    --ring: oklch(0.55 0.18 280 / 50%);
+    --ring: oklch(0.55 0.2 258 / 50%);
     --sidebar: oklch(1 0 0 / 35%);
     --sidebar-foreground: oklch(0.2 0.03 264);
-    --sidebar-primary: oklch(0.55 0.18 280);
+    --sidebar-primary: var(--ios-blue);
     --sidebar-primary-foreground: oklch(0.98 0.01 264);
     --sidebar-accent: oklch(1 0 0 / 45%);
     --sidebar-accent-foreground: oklch(0.2 0.03 264);
     --sidebar-border: oklch(0.2 0.03 264 / 10%);
-    --sidebar-ring: oklch(0.55 0.18 280 / 50%);
+    --sidebar-ring: oklch(0.55 0.2 258 / 50%);
 
     --glass-bg: oklch(1 0 0 / 48%);
     --glass-bg-strong: oklch(1 0 0 / 65%);
@@ -165,26 +170,29 @@
   --card-foreground: oklch(0.2 0.03 264);
   --popover: oklch(1 0 0 / 90%);
   --popover-foreground: oklch(0.2 0.03 264);
-  --primary: oklch(0.55 0.18 280);
+  --ios-blue: #007aff;
+  --ios-green: #34c759;
+  --ios-indigo: #6155f5;
+  --primary: var(--ios-blue);
   --primary-foreground: oklch(0.98 0.01 264);
   --secondary: oklch(1 0 0 / 45%);
   --secondary-foreground: oklch(0.25 0.03 264);
   --muted: oklch(1 0 0 / 40%);
   --muted-foreground: oklch(0.42 0.02 264);
-  --accent: oklch(0.6 0.13 190);
+  --accent: var(--ios-indigo);
   --accent-foreground: oklch(0.98 0.01 264);
-  --destructive: oklch(0.55 0.22 25);
+  --destructive: #ff383c;
   --border: oklch(0.2 0.03 264 / 12%);
   --input: oklch(0.2 0.03 264 / 10%);
-  --ring: oklch(0.55 0.18 280 / 50%);
+  --ring: oklch(0.55 0.2 258 / 50%);
   --sidebar: oklch(1 0 0 / 35%);
   --sidebar-foreground: oklch(0.2 0.03 264);
-  --sidebar-primary: oklch(0.55 0.18 280);
+  --sidebar-primary: var(--ios-blue);
   --sidebar-primary-foreground: oklch(0.98 0.01 264);
   --sidebar-accent: oklch(1 0 0 / 45%);
   --sidebar-accent-foreground: oklch(0.2 0.03 264);
   --sidebar-border: oklch(0.2 0.03 264 / 10%);
-  --sidebar-ring: oklch(0.55 0.18 280 / 50%);
+  --sidebar-ring: oklch(0.55 0.2 258 / 50%);
 
   --glass-bg: oklch(1 0 0 / 48%);
   --glass-bg-strong: oklch(1 0 0 / 65%);
@@ -208,9 +216,9 @@
     @apply bg-background text-foreground;
     min-height: 100dvh;
     background-image:
-      radial-gradient(50% 40% at 15% 0%, oklch(0.55 0.1 280 / 16%) 0%, transparent 65%),
-      radial-gradient(45% 38% at 100% 20%, oklch(0.6 0.08 190 / 14%) 0%, transparent 65%),
-      radial-gradient(55% 50% at 40% 100%, oklch(0.5 0.09 320 / 10%) 0%, transparent 70%);
+      radial-gradient(50% 40% at 15% 0%, oklch(0.55 0.16 258 / 16%) 0%, transparent 65%),
+      radial-gradient(45% 38% at 100% 20%, oklch(0.55 0.15 280 / 14%) 0%, transparent 65%),
+      radial-gradient(55% 50% at 40% 100%, oklch(0.6 0.1 230 / 10%) 0%, transparent 70%);
     background-attachment: fixed;
   }
   html {

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Radar, Target, FileCheck2, LineChart } from "lucide-react";
 
 export default async function Home() {
@@ -15,7 +16,10 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center gap-10 px-4 py-16 text-center">
+    <div className="relative flex min-h-dvh flex-col items-center justify-center gap-10 px-4 py-16 text-center">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="flex flex-col items-center gap-4">
         <div className="glass flex size-14 items-center justify-center rounded-2xl text-primary">
           <Radar className="size-7" />

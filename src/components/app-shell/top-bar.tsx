@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { signOutAction } from "@/lib/auth/actions";
 import { LogOut, Settings, UserRound } from "lucide-react";
 import Link from "next/link";
@@ -27,49 +28,52 @@ export function TopBar({
           {firstName ? `Welcome back, ${firstName}` : "Welcome back"}
         </p>
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <Button variant="ghost" className="gap-2 rounded-full px-2">
-              <Avatar className="size-8">
-                <AvatarFallback className="bg-primary/20 text-primary">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-            </Button>
-          }
-        />
-        <DropdownMenuContent align="end" className="glass-strong w-56">
-          <div className="px-2 py-1.5 text-sm text-muted-foreground truncate">
-            {email}
-          </div>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
+      <div className="flex items-center gap-3">
+        <ThemeToggle />
+        <DropdownMenu>
+          <DropdownMenuTrigger
             render={
-              <Link href="/career-profile">
-                <UserRound className="mr-2 size-4" /> Career Profile
-              </Link>
+              <Button variant="ghost" className="gap-2 rounded-full px-2">
+                <Avatar className="size-8">
+                  <AvatarFallback className="bg-primary/20 text-primary">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
             }
           />
-          <DropdownMenuItem
-            render={
-              <Link href="/settings">
-                <Settings className="mr-2 size-4" /> Settings
-              </Link>
-            }
-          />
-          <DropdownMenuSeparator />
-          <form action={signOutAction}>
+          <DropdownMenuContent align="end" className="glass-strong w-56">
+            <div className="px-2 py-1.5 text-sm text-muted-foreground truncate">
+              {email}
+            </div>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               render={
-                <button type="submit" className="w-full text-left">
-                  <LogOut className="mr-2 size-4" /> Sign out
-                </button>
+                <Link href="/career-profile">
+                  <UserRound className="mr-2 size-4" /> Career Profile
+                </Link>
               }
             />
-          </form>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <DropdownMenuItem
+              render={
+                <Link href="/settings">
+                  <Settings className="mr-2 size-4" /> Settings
+                </Link>
+              }
+            />
+            <DropdownMenuSeparator />
+            <form action={signOutAction}>
+              <DropdownMenuItem
+                render={
+                  <button type="submit" className="w-full text-left">
+                    <LogOut className="mr-2 size-4" /> Sign out
+                  </button>
+                }
+              />
+            </form>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </header>
   );
 }
