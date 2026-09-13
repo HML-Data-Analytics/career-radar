@@ -4,14 +4,16 @@ export const jdIntelligenceSchema = z.object({
   explicitRequirements: z.array(
     z.object({
       requirement: z.string(),
-      category: z.enum(["skill", "experience", "education", "certification", "other"]),
+      category: z
+        .enum(["skill", "experience", "education", "certification", "other"])
+        .catch("other"),
       required: z.boolean(),
     }),
   ),
   inferredPriorities: z.array(
     z.object({
       priority: z.string(),
-      weight: z.enum(["HIGH", "MEDIUM", "LOW"]),
+      weight: z.enum(["HIGH", "MEDIUM", "LOW"]).catch("MEDIUM"),
       rationale: z.string(),
     }),
   ),
@@ -26,7 +28,7 @@ export const redFlagSchema = z.object({
     z.object({
       type: z.string(),
       description: z.string(),
-      severity: z.enum(["low", "medium", "high"]),
+      severity: z.enum(["low", "medium", "high"]).catch("medium"),
     }),
   ),
 });

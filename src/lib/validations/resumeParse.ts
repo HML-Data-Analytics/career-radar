@@ -26,14 +26,17 @@ export const parsedResumeSchema = z.object({
       category: z
         .enum(["technical", "leadership", "soft", "domain", "tool", "language", "other"])
         .nullable()
+        .catch(null)
         .describe("Best-fit category for this skill"),
       proficiency: z
         .enum(["beginner", "intermediate", "advanced", "expert"])
         .nullable()
+        .catch(null)
         .describe("Only set if the resume text actually indicates a level - never guess"),
       yearsExperience: z
         .number()
         .nullable()
+        .catch(null)
         .describe("Only set if the resume text states or clearly implies a duration for this specific skill - never guess"),
     }),
   ),

@@ -1,21 +1,25 @@
 import { z } from "zod";
 
-export const recommendationEnum = z.enum([
-  "STRONGLY_RECOMMEND",
-  "RECOMMEND",
-  "CONSIDER",
-  "WEAK_MATCH",
-  "NOT_RECOMMENDED",
-]);
+export const recommendationEnum = z
+  .enum([
+    "STRONGLY_RECOMMEND",
+    "RECOMMEND",
+    "CONSIDER",
+    "WEAK_MATCH",
+    "NOT_RECOMMENDED",
+  ])
+  .catch("CONSIDER");
 
-export const careerProgressionEnum = z.enum([
-  "promotion",
-  "lateral_move",
-  "strategic_pivot",
-  "downgrade",
-  "temporary_step",
-  "unclear",
-]);
+export const careerProgressionEnum = z
+  .enum([
+    "promotion",
+    "lateral_move",
+    "strategic_pivot",
+    "downgrade",
+    "temporary_step",
+    "unclear",
+  ])
+  .catch("unclear");
 
 export const jobMatchDimensionScoresSchema = z.object({
   seniority: z.number().min(0).max(100),

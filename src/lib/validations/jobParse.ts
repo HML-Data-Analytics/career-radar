@@ -4,7 +4,7 @@ export const parsedJobSchema = z.object({
   title: z.string(),
   company: z.string(),
   location: z.string().nullable(),
-  remoteType: z.enum(["remote", "hybrid", "on_site", "unknown"]),
+  remoteType: z.enum(["remote", "hybrid", "on_site", "unknown"]).catch("unknown"),
   employmentType: z.string().nullable(),
   salaryMin: z.number().nullable(),
   salaryMax: z.number().nullable(),

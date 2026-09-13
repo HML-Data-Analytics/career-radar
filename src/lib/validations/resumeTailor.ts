@@ -26,7 +26,7 @@ export const resumeTailorResultSchema = z.object({
   content: tailoredResumeContentSchema,
   changesSummary: z.array(
     z.object({
-      type: z.enum(["added", "removed", "reworded", "reordered"]),
+      type: z.enum(["added", "removed", "reworded", "reordered"]).catch("reworded"),
       description: z.string(),
     }),
   ),
