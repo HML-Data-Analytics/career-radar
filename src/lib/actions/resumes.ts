@@ -158,8 +158,8 @@ export async function importParsedResumeAction(resumeId: string) {
         currentLocation: string | null;
         yearsOfExperience: number | null;
         experiences: Array<{
-          company: string;
-          title: string;
+          company: string | null;
+          title: string | null;
           location: string | null;
           startDate: string | null;
           endDate: string | null;
@@ -168,10 +168,14 @@ export async function importParsedResumeAction(resumeId: string) {
           responsibilities: string[];
           achievements: string[];
         }>;
-        skills: Array<{ skill: string; category: string | null }>;
-        certifications: Array<{ name: string; issuer: string | null; issueDate: string | null }>;
+        skills: Array<{ skill: string | null; category: string | null }>;
+        certifications: Array<{
+          name: string | null;
+          issuer: string | null;
+          issueDate: string | null;
+        }>;
         education: Array<{
-          institution: string;
+          institution: string | null;
           degree: string | null;
           field: string | null;
           startDate: string | null;
@@ -184,6 +188,25 @@ export async function importParsedResumeAction(resumeId: string) {
   if (!parsed) {
     return { error: "No parsed resume data to import. Parse the resume first." };
   }
+
+  // The AI parser may legitimately fail to identify a required field on a
+  // messy resume (e.g. an education entry with a degree but no clear
+  // institution) and returns null for it per its own instructions - those
+  // entries have nothing to key an experience/skill/cert/education record
+  // on, so they're skipped here rather than failing the whole import.
+  const experiences = parsed.experiences.filter(
+    (exp): exp is typeof exp & { company: string; title: string } =>
+      !!exp.company && !!exp.title,
+  );
+  const skills = parsed.skills.filter(
+    (s): s is typeof s & { skill: string } => !!s.skill,
+  );
+  const certifications = parsed.certifications.filter(
+    (c): c is typeof c & { name: string } => !!c.name,
+  );
+  const education = parsed.education.filter(
+    (e): e is typeof e & { institution: string } => !!e.institution,
+  );
 
   await supabase.from("career_profiles").upsert(
     {
@@ -198,9 +221,9 @@ export async function importParsedResumeAction(resumeId: string) {
     { onConflict: "user_id" },
   );
 
-  if (parsed.experiences.length > 0) {
+  if (experiences.length > 0) {
     await supabase.from("career_experiences").insert(
-      parsed.experiences.map((exp) => ({
+      experiences.map((exp) => ({
         user_id: user.id,
         company: exp.company,
         title: exp.title,
@@ -215,9 +238,9 @@ export async function importParsedResumeAction(resumeId: string) {
     );
   }
 
-  if (parsed.skills.length > 0) {
+  if (skills.length > 0) {
     await supabase.from("career_skills").insert(
-      parsed.skills.map((s) => ({
+      skills.map((s) => ({
         user_id: user.id,
         skill: s.skill,
         category: s.category,
@@ -225,9 +248,9 @@ export async function importParsedResumeAction(resumeId: string) {
     );
   }
 
-  if (parsed.certifications.length > 0) {
+  if (certifications.length > 0) {
     await supabase.from("career_certifications").insert(
-      parsed.certifications.map((c) => ({
+      certifications.map((c) => ({
         user_id: user.id,
         name: c.name,
         issuer: c.issuer,
@@ -236,9 +259,9 @@ export async function importParsedResumeAction(resumeId: string) {
     );
   }
 
-  if (parsed.education.length > 0) {
+  if (education.length > 0) {
     await supabase.from("career_education").insert(
-      parsed.education.map((e) => ({
+      education.map((e) => ({
         user_id: user.id,
         institution: e.institution,
         degree: e.degree,

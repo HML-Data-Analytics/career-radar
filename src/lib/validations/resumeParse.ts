@@ -9,8 +9,8 @@ export const parsedResumeSchema = z.object({
   yearsOfExperience: z.number().nullable(),
   experiences: z.array(
     z.object({
-      company: z.string(),
-      title: z.string(),
+      company: z.string().nullable(),
+      title: z.string().nullable(),
       location: z.string().nullable(),
       startDate: z.string().nullable().describe("YYYY-MM-DD or YYYY-MM if day is unknown"),
       endDate: z.string().nullable().describe("null if this is the current role"),
@@ -22,20 +22,20 @@ export const parsedResumeSchema = z.object({
   ),
   skills: z.array(
     z.object({
-      skill: z.string(),
+      skill: z.string().nullable(),
       category: z.string().nullable(),
     }),
   ),
   certifications: z.array(
     z.object({
-      name: z.string(),
+      name: z.string().nullable(),
       issuer: z.string().nullable(),
       issueDate: z.string().nullable(),
     }),
   ),
   education: z.array(
     z.object({
-      institution: z.string(),
+      institution: z.string().nullable(),
       degree: z.string().nullable(),
       field: z.string().nullable(),
       startDate: z.string().nullable(),
