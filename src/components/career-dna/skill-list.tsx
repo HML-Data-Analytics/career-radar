@@ -71,6 +71,31 @@ function groupByCategory(skills: Skill[]): Array<[string, Skill[]]> {
   ]);
 }
 
+function proficiencyYearsLabel(skill: Skill): string | null {
+  const parts = [
+    skill.proficiency,
+    skill.years_experience
+      ? `${skill.years_experience} yr${skill.years_experience === 1 ? "" : "s"}`
+      : null,
+  ].filter(Boolean);
+  return parts.length > 0 ? parts.join(" · ") : null;
+}
+
+function DeleteSkillButton({ skill }: { skill: Skill }) {
+  return (
+    <form action={deleteSkillAction.bind(null, skill.id)}>
+      <Button
+        type="submit"
+        variant="ghost"
+        size="icon-sm"
+        aria-label={`Remove ${skill.skill}`}
+      >
+        <Trash2 className="size-3.5 text-muted-foreground hover:text-destructive" />
+      </Button>
+    </form>
+  );
+}
+
 export function SkillList({ skills }: { skills: Skill[] }) {
   const [state, formAction, isPending] = useActionState(addSkillAction, null);
   const grouped = useMemo(() => groupByCategory(skills), [skills]);
@@ -82,45 +107,62 @@ export function SkillList({ skills }: { skills: Skill[] }) {
       ) : (
         <div className="glass-panel flex flex-col divide-y divide-border overflow-hidden">
           {grouped.map(([category, categorySkills]) => (
-            <div key={category} className="overflow-x-auto">
+            <div key={category}>
               <p className="px-4 pt-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                 {CATEGORY_LABELS[category]} ({categorySkills.length})
               </p>
-              <Table>
-                <TableHeader>
-                  <TableRow className="hover:bg-transparent">
-                    <TableHead>Skill</TableHead>
-                    <TableHead>Proficiency</TableHead>
-                    <TableHead>Years</TableHead>
-                    <TableHead className="w-10" />
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {categorySkills.map((skill) => (
-                    <TableRow key={skill.id}>
-                      <TableCell className="font-medium">{skill.skill}</TableCell>
-                      <TableCell className="text-muted-foreground capitalize">
-                        {skill.proficiency ?? "-"}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {skill.years_experience ?? "-"}
-                      </TableCell>
-                      <TableCell>
-                        <form action={deleteSkillAction.bind(null, skill.id)}>
-                          <Button
-                            type="submit"
-                            variant="ghost"
-                            size="icon-sm"
-                            aria-label={`Remove ${skill.skill}`}
-                          >
-                            <Trash2 className="size-3.5 text-muted-foreground hover:text-destructive" />
-                          </Button>
-                        </form>
-                      </TableCell>
+
+              {/* Mobile: stacked rows instead of a table. A 4-column table
+                  (skill, proficiency, years, delete) can't fit a real skill
+                  name at phone width without truncating badly or forcing
+                  horizontal scroll on a list meant to be scanned. */}
+              <ul className="flex flex-col divide-y divide-border sm:hidden">
+                {categorySkills.map((skill) => (
+                  <li key={skill.id} className="flex items-center justify-between gap-3 px-4 py-3">
+                    <div className="min-w-0">
+                      <p className="font-medium">{skill.skill}</p>
+                      {proficiencyYearsLabel(skill) ? (
+                        <p className="text-sm text-muted-foreground capitalize">
+                          {proficiencyYearsLabel(skill)}
+                        </p>
+                      ) : null}
+                    </div>
+                    <div className="shrink-0">
+                      <DeleteSkillButton skill={skill} />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              {/* sm and up: full table */}
+              <div className="hidden overflow-x-auto sm:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="hover:bg-transparent">
+                      <TableHead>Skill</TableHead>
+                      <TableHead>Proficiency</TableHead>
+                      <TableHead>Years</TableHead>
+                      <TableHead className="w-10" />
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {categorySkills.map((skill) => (
+                      <TableRow key={skill.id}>
+                        <TableCell className="font-medium">{skill.skill}</TableCell>
+                        <TableCell className="text-muted-foreground capitalize">
+                          {skill.proficiency ?? "-"}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {skill.years_experience ?? "-"}
+                        </TableCell>
+                        <TableCell>
+                          <DeleteSkillButton skill={skill} />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           ))}
         </div>
