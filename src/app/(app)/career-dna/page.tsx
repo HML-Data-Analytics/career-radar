@@ -1,14 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import { ExperienceList } from "@/components/career-dna/experience-list";
-import { SkillList } from "@/components/career-dna/skill-list";
-import { EvidenceList } from "@/components/career-dna/evidence-list";
+import { CareerDnaTabs } from "@/components/career-dna/career-dna-tabs";
 
 export default async function CareerDnaPage() {
   const supabase = await createClient();
@@ -44,22 +36,11 @@ export default async function CareerDnaPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="experience">
-        <TabsList className="glass">
-          <TabsTrigger value="experience">Experience</TabsTrigger>
-          <TabsTrigger value="skills">Skills</TabsTrigger>
-          <TabsTrigger value="evidence">Evidence</TabsTrigger>
-        </TabsList>
-        <TabsContent value="experience" className="mt-4">
-          <ExperienceList experiences={experiences ?? []} />
-        </TabsContent>
-        <TabsContent value="skills" className="mt-4">
-          <SkillList skills={skills ?? []} />
-        </TabsContent>
-        <TabsContent value="evidence" className="mt-4">
-          <EvidenceList evidence={evidence ?? []} />
-        </TabsContent>
-      </Tabs>
+      <CareerDnaTabs
+        experiences={experiences ?? []}
+        skills={skills ?? []}
+        evidence={evidence ?? []}
+      />
     </div>
   );
 }
